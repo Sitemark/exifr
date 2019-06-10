@@ -736,7 +736,30 @@
 	function uint8ArrayToString(arr) {
 	}
 
-	/* Based on https://github.com/mattiasw/ExifReader/blob/master/src/xmp-tags.js */
+	/* Based on https://github.com/mattiasw/ExifReader/blob/master/src/xmp-tags.js
+	 * This Source Code Form is subject to the terms of the Mozilla Public
+	 * License, v. 2.0. If a copy of the MPL was not distributed with this
+	 * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
+	var DOMParser$1 = {
+	    get
+	};
+
+	function get() {
+	    if (typeof DOMParser !== 'undefined') {
+	        return DOMParser;
+	    }
+	    try {
+	        return eval('require')('xmldom').DOMParser; // This stops Webpack from replacing the require with a generic import and bundling the module.
+	    } catch (error) {
+	        return undefined;
+	    }
+	}
+
+	/* Based on https://github.com/mattiasw/ExifReader/blob/master/src/xmp-tags.js
+	 * This Source Code Form is subject to the terms of the Mozilla Public
+	 * License, v. 2.0. If a copy of the MPL was not distributed with this
+	 * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 	var XMPParser = {
 	    read
@@ -753,15 +776,8 @@
 	    }
 	}
 
-	function getDOMParser() {
-	    if (typeof DOMParser !== 'undefined') {
-	        return DOMParser;
-	    }
-	    return undefined;
-	}
-
 	function getDocument(xmlSource) {
-	    const Parser = getDOMParser();
+	    const Parser = DOMParser$1.get();
 	    if (!Parser) {
 	        console.warn('Warning: DOMParser is not available. It is needed to be able to parse XMP tags.'); // eslint-disable-line no-console
 	        throw new Error();
@@ -1660,7 +1676,7 @@
 		// TIFF - The basic EXIF tags (image, exif, gps)
 		tiff: true,
 		// XMP = XML based extension, often used by editors like Photoshop.
-		xmp: true,
+		xmp: false,
 		// ICC - Not implemented yet
 		icc: false,
 		// IPTC - Captions and copyrights
