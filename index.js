@@ -1019,6 +1019,10 @@
 		parseTiffTag(offset) {
 			var type = getUint16(this.buffer, offset + 2, this.le);
 			var valuesCount = getUint32(this.buffer, offset + 4, this.le);
+
+			// Hotfix for issues reading GPSInfoIFDPointer in XT2 images. Type is 13 but should be 4
+			type = type === 13 ? 4 : type;
+
 			var valueByteSize = SIZE_LOOKUP[type - 1];
 			if (valueByteSize * valuesCount <= 4)
 				var valueOffset = offset + 8;
@@ -1295,14 +1299,12 @@
 
 	function handleDataView(view, options) {
 		var exifPosition = findTiff(view);
-		if (exifPosition)
-			return parse(view, options, exifPosition)
+		return parse(view, options, exifPosition || { start: 0 })
 	}
 
 	function handleBuffer(buffer, options) {
 		var exifPosition = findTiff(buffer);
-		if (exifPosition)
-			return parse(buffer, options, exifPosition)
+		return parse(buffer, options, exifPosition || { start: 0 })
 	}
 
 

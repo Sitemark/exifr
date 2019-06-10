@@ -54,14 +54,12 @@ function handleArrayBuffer(arrayBuffer, options) {
 
 function handleDataView(view, options) {
 	var exifPosition = findTiff(view)
-	if (exifPosition)
-		return parse(view, options, exifPosition)
+	return parse(view, options, exifPosition || { start: 0 })
 }
 
 function handleBuffer(buffer, options) {
 	var exifPosition = findTiff(buffer)
-	if (exifPosition)
-		return parse(buffer, options, exifPosition)
+	return parse(buffer, options, exifPosition || { start: 0 })
 }
 
 
