@@ -963,6 +963,14 @@
 				delete this.image.ExifIFDPointer;
 				delete this.image.GPSInfoIFDPointer;
 				delete this.image.InteroperabilityIFDPointer;
+
+				// Sometimes XMP data is stored inside ApplicatioNotes...
+				if (this.options.xmp && this.image.ApplicationNotes) {
+					this.xmp = String.fromCharCode.apply(String, this.image.ApplicationNotes);
+					this.postProcessXmp();
+					delete this.image.ApplicationNotes;
+				}
+
 			} else {
 				this.image = ifd0;
 			}
@@ -1102,10 +1110,15 @@
 
 			// Trims the mess around.
 			if (this.options.postProcess) {
-				let start = this.xmp.indexOf('<x:xmpmeta');
-				let end = this.xmp.indexOf('x:xmpmeta>') + 10;
-				this.xmp = this.xmp.slice(start, end);
+				this.postProcessXmp();
 			}
+
+		}
+
+		postProcessXmp(){
+			let start = this.xmp.indexOf('<x:xmpmeta');
+			let end = this.xmp.indexOf('x:xmpmeta>') + 10;
+			this.xmp = this.xmp.slice(start, end);
 		}
 
 
