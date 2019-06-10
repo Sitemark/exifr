@@ -1398,27 +1398,27 @@
 			// Cancel if the ifd0 is empty (imaged created from scratch in photoshop).
 			if (Object.keys(ifd0).length === 0) return
 
+			this.image = Object.assign({}, ifd0);
+
+			if (this.options.exif && ifd0.ExifIFDPointer)
+				this.exif = this.parseTiffTags(this.tiffOffset + ifd0.ExifIFDPointer, exif);
+
 			// IFD0 segment contains also offset pointers to another segments deeper within the EXIF.
 			// User doesn't need to see this. But we're sanitizing it only if options.postProcess is enabled.
 			if (this.options.postProcess) {
-				this.image = Object.assign({}, ifd0);
 				delete this.image.ExifIFDPointer;
 				delete this.image.GPSInfoIFDPointer;
 				delete this.image.InteroperabilityIFDPointer;
 
 				// Sometimes XMP data is stored inside ApplicatioNotes...
-				if (this.options.xmp && this.image.ApplicationNotes) {
-					this.xmp = String.fromCharCode.apply(String, this.image.ApplicationNotes);
+				const applicationNotes = this.image.ApplicationNotes || this.exif.ApplicationNotes;
+				if (this.options.xmp && applicationNotes) {
+					this.xmp = String.fromCharCode.apply(String, applicationNotes);
 					this.postProcessXmp();
 					delete this.image.ApplicationNotes;
+					delete this.exif.ApplicationNotes;
 				}
-
-			} else {
-				this.image = ifd0;
 			}
-
-			if (this.options.exif && ifd0.ExifIFDPointer)
-				this.exif = this.parseTiffTags(this.tiffOffset + ifd0.ExifIFDPointer, exif);
 
 			if (this.options.gps && ifd0.GPSInfoIFDPointer) {
 				let gps$1 = this.gps = this.parseTiffTags(this.tiffOffset + ifd0.GPSInfoIFDPointer, gps);
