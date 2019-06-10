@@ -136,8 +136,6 @@ function parseXMPObject(xmpObject) {
             nodes = [nodes];
         }
 
-        console.log(nodes);
-
         nodes.forEach((node) => {
             Object.assign(tags, parseNodeAttributesAsTags(node.attributes));
             if (typeof node.value === 'object') {
