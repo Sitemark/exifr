@@ -1,6 +1,4 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+/* Based on https://github.com/mattiasw/ExifReader/blob/master/src/xmp-tags.js */
 
 export default {
     read
@@ -184,7 +182,9 @@ function isNamespaceDefinition(name) {
 }
 
 function getLocalName(name) {
-    return name.split(':')[1];
+    // return name.split(':')[1];
+    // We want to keep full name to avoid overwriting other tags when merging
+    return name;
 }
 
 function getDescription(value, name = undefined) {
