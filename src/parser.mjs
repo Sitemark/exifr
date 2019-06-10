@@ -9,6 +9,7 @@ import {
 	slice,
 	toString
 } from './buff-util.mjs'
+import XMPParser from "./xmp-parser"
 
 
 const SIZE_LOOKUP = [
@@ -394,6 +395,7 @@ export class ExifParser {
 		let start = this.xmp.indexOf('<x:xmpmeta')
 		let end = this.xmp.indexOf('x:xmpmeta>') + 10
 		this.xmp = this.xmp.slice(start, end)
+		this.xmp = XMPParser.read(this.xmp)
 	}
 
 
