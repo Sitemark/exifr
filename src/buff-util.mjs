@@ -1,3 +1,9 @@
+// Polyfill for Edge
+import TextEncodingPolyfill from 'text-encoding'
+if (!window.TextDecoder) {
+	window.TextDecoder = TextEncodingPolyfill.TextDecoder
+}
+
 export var hasBuffer = typeof Buffer !== 'undefined'
 export var isBrowser = typeof navigator !== 'undefined'
 export var isNode = typeof require === 'function'
