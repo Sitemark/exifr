@@ -654,3 +654,218 @@ export const iptc = {
 	120: 'caption',
 	122: 'captionWriter',
 }
+
+
+//https://fastapi.metacpan.org/source/EXIFTOOL/Image-ExifTool-10.00/lib/Image/ExifTool/FLIR.pm
+export const flir = {
+	0x01: {
+		name: 'RawData',
+		tags: {
+			0x02: {
+				name: 'RawThermalImageWidth',
+				type: 'uint16',
+			},
+			0x04: {
+				name: 'RawThermalImageHeight',
+				type: 'uint16',
+			},
+		},
+	},
+	0x20: {
+		name: 'CameraInfo',
+		tags: {
+			0x20: {
+				name: 'Emissivity',
+				type: 'float32',
+			},
+			0x24: {
+				name: 'ObjectDistance',
+				type: 'float32',
+			},
+			0x28: {
+				name: 'ReflectedApparentTemperature',
+				type: 'float32',
+			},
+			0x2c: {
+				name: 'AtmosphericTemperature',
+				type: 'float32',
+			},
+			0x30: {
+				name: 'IRWindowTemperature',
+				type: 'float32',
+			},
+			0x34: {
+				name: 'IRWindowTransmission',
+				type: 'float32',
+			},
+			0x3c: {
+				name: 'RelativeHumidity',
+				type: 'float32',
+			},
+			0x58: {
+				name: 'PlanckR1',
+				type: 'float32',
+			},
+			0x5c: {
+				name: 'PlanckB',
+				type: 'float32',
+			},
+			0x60: {
+				name: 'PlanckF',
+				type: 'float32',
+			},
+			0x70: {
+				name: 'AtmosphericTransAlpha1',
+				type: 'float32',
+			},
+			0x74: {
+				name: 'AtmosphericTransAlpha2',
+				type: 'float32',
+			},
+			0x78: {
+				name: 'AtmosphericTransBeta1',
+				type: 'float32',
+			},
+			0x7c: {
+				name: 'AtmosphericTransBeta2',
+				type: 'float32',
+			},
+			0x80: {
+				name: 'AtmosphericTransX',
+				type: 'float32',
+			},
+			0x90: {
+				name: 'CameraTemperatureRangeMax',
+				type: 'float32',
+			},
+			0x94: {
+				name: 'CameraTemperatureRangeMin',
+				type: 'float32',
+			},
+			0x98: {
+				name: 'UnknownTemperature1',
+				type: 'float32',
+			},
+			0x9c: {
+				name: 'UnknownTemperature2',
+				type: 'float32',
+			},
+			0xa0: {
+				name: 'UnknownTemperature3',
+				type: 'float32',
+			},
+			0xa4: {
+				name: 'UnknownTemperature4',
+				type: 'float32',
+			},
+			0xa8: {
+				name: 'UnknownTemperature5',
+				type: 'float32',
+			},
+			0xac: {
+				name: 'UnknownTemperature6',
+				type: 'float32',
+			},
+			0xd4: {
+				name: 'CameraModel',
+				type: 'string',
+				length: 32,
+			},
+			0xf4: {
+				name: 'CameraPartNumber',
+				type: 'string',
+				length: 16,
+			},
+			0x104: {
+				name: 'CameraSerialNumber',
+				type: 'string',
+				length: 16,
+			},
+			0x114: {
+				name: 'CameraSoftware',
+				type: 'string',
+				length: 16,
+			},
+			0x170: {
+				name: 'LensModel',
+				type: 'string',
+				length: 32,
+			},
+			0x190: {
+				name: 'LensPartNumber',
+				type: 'string',
+				length: 16,
+			},
+			0x1a0: {
+				name: 'LensSerialNumber',
+				type: 'string',
+				length: 16,
+			},
+			0x1b4: {
+				name: 'FieldOfView',
+				type: 'float32',
+			},
+			0x1ec: {
+				name: 'FilterModel',
+				type: 'string',
+				length: 16,
+			},
+			0x1fc: {
+				name: 'FilterPartNumber',
+				type: 'string',
+				length: 32,
+			},
+			0x21c: {
+				name: 'FilterSerialNumber',
+				type: 'string',
+				length: 32,
+			},
+			0x308: {
+				name: 'PlanckO',
+				type: 'int32',
+			},
+			0x30c: {
+				name: 'PlanckR2',
+				type: 'float32',
+			},
+			0x338: {
+				name: 'RawValueMedian',
+				type: 'uint16',
+			},
+			0x33c: {
+				name: 'RawValueRange',
+				type: 'uint16',
+			},
+			// TODO: DateTimeOriginal
+			0x390: {
+				name: 'FocusStepCount',
+				type: 'uint16',
+			},
+			0x45c: {
+				name: 'FocusDistance',
+				type: 'float32',
+			},
+		},
+	},
+    0x22: {
+		name: 'PaletteInfo',
+		tags: {
+			0x50: {
+				name: 'PaletteName',
+				type: 'string',
+				length: 32,
+			},
+			// TODO: Finish tags
+		},
+	},
+	0x2b: {
+		name: 'GPSInfo',
+		tags: {
+			0x58: {
+				name: 'GPSMapDatum',
+				type: 'string',
+				length: 16,
+			},
+		},
+	},
+}
