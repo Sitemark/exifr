@@ -564,8 +564,6 @@ describe('parser (exif data)', () => {
 
 	describe('cameras', () => {
 
-		// TODO: Add tests for XMP and Application Notes parsing
-
 		const options = { xmp: true, flir: true }
 
         describe('DJI Zenmuse XT2 640 R 13mm', () => {
@@ -861,7 +859,6 @@ describe('parser (exif data)', () => {
         it('FLIR Tau 2 640 R 19mm', async () => {
 			const exif = await parse(buffers['FLIR_Tau_2_640_R_19mm.jpg'], options)
 			assert.exists(exif, `exif doesn't exist`)
-			// TODO: Unknown tags
 			assert.equal(exif.Make, 'FLIR Systems')
 			assert.equal(exif.Model, 'FLIR Tau 2 640')
 			assert.equal(exif.Software, 'AscTec FLIR Converter')
@@ -877,6 +874,8 @@ describe('parser (exif data)', () => {
 			assert.equal(exif.GPSImgDirectionRef, 'T')
 			assert.equal(exif.GPSImgDirection, 0)
 			assert.equal(exif.GPSDateStamp, '2019:07:19')
+			assert.equal(exif.GPSPitch, -90)
+			assert.equal(exif.GPSRoll, -11.06)
 			assert.deepEqual(exif.timestamp, new Date('2019-07-19T09:21:52.000Z'))
 			assert.equal(exif.latitude, 52.01196797222222)
 			assert.equal(exif.longitude, 4.692637972222222)

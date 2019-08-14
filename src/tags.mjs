@@ -468,7 +468,9 @@ export const gps = {
 	0x001C: 'GPSAreaInformation',
 	0x001D: 'GPSDateStamp',
 	0x001E: 'GPSDifferential',
-	0x001F: 'GPSHPositioningError'
+	0x001F: 'GPSHPositioningError',
+	0xD000: 'GPSPitch',
+	0xD001: 'GPSRoll',
 }
 
 
