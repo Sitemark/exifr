@@ -10,6 +10,7 @@ import {
 	slice,
 	toString
 } from './buff-util.mjs'
+import {getFloat32} from "./buff-util";
 
 const SIZE_LOOKUP = {
 	1: 1, // BYTE      - 8-bit unsigned integer
@@ -74,6 +75,28 @@ function isExifSegment(buffer, offset) {
 
 function getExifSize(buffer, offset) {
 	var start = offset + 10
+	var size = getUint16(buffer, offset + 2)
+	var end = start + size
+	return {start, size, end}
+}
+
+
+
+function findFlirFFF(buffer) {
+	return findAppSegment(buffer, 1, isFlirFFFSegment, getFlirFFFSize);
+}
+
+function isFlirFFFSegment(buffer, offset) {
+	return getUint32(buffer, offset + 4) === 0x464C4952 // 'FLIR'
+	// After FLIR, there always seems to be 00 01 00 0A, but I'm not sure so I'm not checking that yet
+	// 	&& getUint32(buffer, osset + 8) === 0x0001000A
+	// If this is followed by 'FFF\0' (46 46 46 00 in hex), this is an FFF segment
+		&& getUint32(buffer, offset + 12) === 0x46464600 // 'FFF\0'
+}
+
+function getFlirFFFSize(buffer, offset) {
+    // TODO: Implement size!
+	var start = offset + 12
 	var size = getUint16(buffer, offset + 2)
 	var end = start + size
 	return {start, size, end}
@@ -197,6 +220,7 @@ export class ExifParser extends Reader {
 		if (this.options.xmp)  this.parseXmpSegment()  // Additional XML data (in XML)
 		if (this.options.icc)  this.parseIccSegment()  // Image profile
 		if (this.options.iptc) this.parseIptcSegment() // Captions and copyrights
+		if (this.options.flir) this.parseFlirFFFSegment() // Additional data included by FLIR cameras
 
 		// close FS file handle just in case it's still open
 		if (this.reader) this.reader.destroy()
@@ -207,6 +231,7 @@ export class ExifParser extends Reader {
 		else
 			var output = {image, exif, gps, interop, thumbnail, iptc}
 		if (this.xmp) output.xmp = this.xmp
+        if (this.flir) output.flir = this.flir
 		// Return undefined rather than empty object if there's no data.
 		for (let key in output)
 			if (output[key] === undefined)
@@ -442,6 +467,131 @@ export class ExifParser extends Reader {
 			case 13: return getUint32(chunk, offset, this.le)
 			default: throw new Error(`Invalid tiff type ${type}`)
 		}
+	}
+
+	// FLIR file header (ref 3)
+	// 0x00 - 00 - string[4] file format ID = "FFF\0"
+	// 0x04 - 04 - string[16] file creator: seen "\0","MTX IR\0","CAMCTRL\0"
+	// 0x14 - 20 - int32u file format version = 100
+	// 0x18 - 24 - int32u offset to record directory
+	// 0x1c - 28 - int32u number of entries in record directory
+	// 0x20 - 32 - int32u next free index ID = 2
+	// 0x24 - 36 - int16u swap pattern = 0 (?)
+	// 0x28 - 40 - int16u[7] spares
+	// 0x34 - 52 - int32u[2] reserved
+	// 0x3c - 60 - int32u checksum
+	parseFlirFFFSegment() {
+		// Cancel if the file doesn't contain the segment or if it's damaged.
+		if (!this.ensureSegmentPosition('flir', findFlirFFF)) return
+
+		let le = this.le
+		let flir = {}
+
+		const creator = toString(this.buffer, this.flirOffset + 4, this.flirOffset + 4 + 16, true)
+		flir.creator = creator
+
+		let version = getUint32(this.buffer, this.flirOffset + 20, le)
+		// The version should lie in the 100's. If it doesn't we're reading with the wrong byte order.
+		if (version < 100 || version >= 200) {
+			le = !le
+			version = getUint32(this.buffer, this.flirOffset + 20, le)
+		}
+		flir.version = version
+
+		this.parseFlirFFFDirectory(flir, le)
+		this.flir = flir
+	}
+
+    parseFlirFFFDirectory(flir, le) {
+		let directoryOffset = getUint32(this.buffer, this.flirOffset + 24, le)
+		directoryOffset += this.flirOffset
+
+		const numberOfEntries = getUint32(this.buffer, this.flirOffset + 28, le)
+
+		// Parse table
+		// Every record is 32 bytes
+		for (let i = 0; i < numberOfEntries; i += 1) {
+			const recordOffset = directoryOffset + i * 32
+			this.parseFlirFFFRecord(flir, recordOffset, le)
+		}
+	}
+
+	// FLIR record entry (ref 3):
+	// 0x00 - 00 - int16u record type
+	// 0x02 - 02 - int16u record subtype: RawData 1=BE, 2=LE, 3=PNG; 1 for other record types
+	// 0x04 - 04 - int32u record version: seen 0x64,0x66,0x67,0x68,0x6f,0x104
+	// 0x08 - 08 - int32u index id = 1
+	// 0x0c - 12 - int32u record offset from start of FLIR data
+	// 0x10 - 16 - int32u record length
+	// 0x14 - 20 - int32u parent = 0 (?)
+	// 0x18 - 24 - int32u object number = 0 (?)
+	// 0x1c - 28 - int32u checksum: 0 for no checksum
+	parseFlirFFFRecord(flir, recordOffset, le) {
+		const recordType = getUint16(this.buffer, recordOffset, le)
+		const recordSubType = getUint16(this.buffer, recordOffset + 2, le)
+
+        let recordLE = le
+		if (recordType === 1) {
+			if (recordSubType < 1 || recordSubType > 2) {
+				return
+			}
+			recordLE = (recordSubType === 2)
+		}
+
+		let recordContentOffset = getUint32(this.buffer, recordOffset + 12, le)
+		recordContentOffset += this.flirOffset
+
+		this.parseFlirFFFRecordTags(flir, recordType, recordContentOffset, recordLE)
+	}
+
+	parseFlirFFFRecordTags(flir, recordType, recordContentOffset, le) {
+	    if (!(recordType in tags.flir)) {
+			return
+		}
+
+		const recordTagsInfo = tags.flir[recordType];
+
+	    // TODO: What the fuck?!!
+		if (recordType !== 1) {
+			recordContentOffset += 120
+		}
+
+		// All records always use their first 2 bytes to check the LE again
+		// If it's not equal to 2, we're using the wrong order.
+		const byteOrder = getUint16(this.buffer, recordContentOffset, le)
+		if (byteOrder !== 2) {
+			le = !le
+		}
+
+		Object.entries(recordTagsInfo.tags).forEach(([relativeTagOffset, tagInfo]) => {
+			relativeTagOffset = parseInt(relativeTagOffset)
+
+			const tagOffset = recordContentOffset + relativeTagOffset
+			const tagName = tagInfo.name
+			const tagType = tagInfo.type;
+
+			let value = null;
+			if (tagType === 'uint8') {
+				value = getUint8(this.buffer, tagOffset, le)
+			} else if (tagType === 'uint16') {
+				value = getUint16(this.buffer, tagOffset, le)
+			} else if (tagType === 'uint32') {
+				value = getUint32(this.buffer, tagOffset, le)
+			} else if (tagType === 'int8') {
+				value = getInt8(this.buffer, tagOffset, le)
+			} else if (tagType === 'int16') {
+				value = getInt16(this.buffer, tagOffset, le)
+			} else if (tagType === 'int32') {
+				value = getInt32(this.buffer, tagOffset, le)
+			} else if (tagType === 'float32') {
+				value = getFloat32(this.buffer, tagOffset, le)
+			} else if (tagType === 'string') {
+				const stringLength = tagInfo.length
+				value = toString(this.buffer, tagOffset, tagOffset + stringLength, true)
+			}
+
+			flir[tagName] = value
+		})
 	}
 
 

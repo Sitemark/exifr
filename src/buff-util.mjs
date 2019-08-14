@@ -41,6 +41,12 @@ export function getInt32(buffer, offset, littleEndian = false) {
 	else					return buffer.readInt32BE(offset)
 }
 
+export function getFloat32(buffer, offset, littleEndian = false) {
+	if (buffer.getFloat32)  return buffer.getFloat32(offset, littleEndian)
+	else if (littleEndian)  return buffer.readFloatLE(offset)
+	else                    return buffer.readFloatBE(offset)
+}
+
 // KEEP IN MIND!
 // Node's buffer.slice() returns new Buffer pointing to the same memory.
 // Web's arrayBuffer.slice() returns new ArrayBuffer with newly copied data.
@@ -57,17 +63,22 @@ export function slice(buffer, start, end) {
 
 // NOTE: EXIF strings are ASCII encoded, but since ASCII is subset of UTF-8
 //       we can safely use it along with TextDecoder API.
-export function toString(buffer, start, end) {
+export function toString(buffer, start, end, clean = false) {
+	let result = null;
 	if (buffer instanceof DataView) {
 		if (hasBuffer) {
-			return Buffer.from(buffer.buffer)
+			result = Buffer.from(buffer.buffer)
 				.slice(start, end)
 				.toString('ascii', start, end)
 		} else {
 			var decoder = new TextDecoder('utf-8')
-			return decoder.decode(slice(buffer, start, end))
+			result = decoder.decode(slice(buffer, start, end))
 		}
 	} else {
-		return buffer.toString('ascii', start, end)
+		result = buffer.toString('ascii', start, end)
 	}
+	if (clean) {
+		result = result.replace(/\0.*/, '')
+	}
+	return result
 }
