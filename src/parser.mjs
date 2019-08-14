@@ -7,10 +7,11 @@ import {
 	getInt8,
 	getInt16,
 	getInt32,
+    getFloat32,
+	getFloat64,
 	slice,
 	toString
 } from './buff-util.mjs'
-import {getFloat32} from "./buff-util";
 
 const SIZE_LOOKUP = {
 	1: 1, // BYTE      - 8-bit unsigned integer
@@ -462,8 +463,8 @@ export class ExifParser extends Reader {
 			case 8:  return getInt16(chunk, offset, this.le)
 			case 9:  return getInt32(chunk, offset, this.le)
 			case 10: return getInt32(chunk, offset, this.le) / getInt32(chunk, offset + 4, this.le)
-			//case 11: return getFloat()  // TODO: buffer.readFloatBE() buffer.readFloatLE()
-			//case 12: return getDouble() // TODO: buffer.readDoubleBE() buffer.readDoubleLE()
+			case 11: return getFloat32(chunk, offset, this.le)
+			case 12: return getFloat64(chunk, offset, this.le)
 			case 13: return getUint32(chunk, offset, this.le)
 			default: throw new Error(`Invalid tiff type ${type}`)
 		}
@@ -600,7 +601,7 @@ export class ExifParser extends Reader {
 		if (!this.ensureSegmentPosition('xmp', findXmp)) return
 
 		// Read XMP segment as string. We're not parsing the XML.
-		this.xmp = toString(this.buffer, this.xmpOffset, this.xmpOffset + this.xmpEnd)
+		this.xmp = toString(this.buffer, this.xmpOffset, this.xmpOffset + this.xmpEnd, false)
 
 		// Trims the mess around.
 		if (this.options.postProcess) {
