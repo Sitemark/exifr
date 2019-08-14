@@ -421,7 +421,6 @@ describe('parser (exif data)', () => {
 
 			it(`003b.jpg`, async () => {
 				var exif = await parse(buffers['003b.jpg'], { flir: true, mergeOutput: false })
-                console.log(exif.flir)
 				assert.exists(exif.flir, `flir doesn't exist`)
 				assert.equal(exif.flir.creator, 'ATAU_RBFO')
 				assert.equal(exif.flir.version, 100)
@@ -471,14 +470,6 @@ describe('parser (exif data)', () => {
 				assert.equal(exif.flir.GPSMapDatum, 'WGS-84')
 			})
 
-		})
-
-		it(`xt2`, async () => {
-			var exif = await parse(buffers['DJI_Zenmuse_XT2_640_R_13mm.tiff'], { mergeOutput: false })
-            console.log(exif)
-            // TODO: Test GPS values or check whether there's a test already
-			console.log(String.fromCharCode.apply(String, exif.ApplicationNotes))
-            // TODO: Check whether there is also normal XMP
 		})
 
 		it(`fast-exif #2 - should not skip exif if 0xFF byte precedes marker`, async () => {
