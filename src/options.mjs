@@ -37,6 +37,8 @@ export const defaultOptions = {
 	icc: false,
 	// APP13 - IPTC - Captions and copyrights
 	iptc: false,
+	// APP1 - FLIR - A special FLIR FFF segment
+	flir: false,
 
 	// TIFF BLOCKS
 	// APP1 - Exif IFD.

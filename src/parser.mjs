@@ -597,11 +597,17 @@ export class ExifParser extends Reader {
 
 
 	parseXmpSegment() {
-		// Cancel if the file doesn't contain the segment or if it's damaged.
-		if (!this.ensureSegmentPosition('xmp', findXmp)) return
-
-		// Read XMP segment as string. We're not parsing the XML.
-		this.xmp = toString(this.buffer, this.xmpOffset, this.xmpOffset + this.xmpEnd, false)
+		if (this.ensureSegmentPosition('xmp', findXmp)) {
+		    // If there is an XMP segment, we can read it directly.
+			this.xmp = toString(this.buffer, this.xmpOffset, this.xmpOffset + this.xmpEnd, false)
+		} else if (this.options.xmp && (this.image.ApplicationNotes || this.exif.ApplicationNotes)) {
+			// If the file doesn't contain the segment or if it's damaged, the XMP might be in ApplicationNotes.
+			this.xmp = String.fromCharCode.apply(String, this.image.ApplicationNotes || this.exif.ApplicationNotes)
+			delete this.image.ApplicationNotes
+			delete this.exif.ApplicationNotes
+		} else {
+			return
+		}
 
 		// Trims the mess around.
 		if (this.options.postProcess) {

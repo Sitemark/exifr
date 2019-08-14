@@ -625,6 +625,9 @@ describe('parser (exif data)', () => {
 				assert.equal(exif.GPSAltitude, 881.609)
 				assert.equal(exif.latitude, 39.91763687133333)
 				assert.equal(exif.longitude, -2.822976112444444)
+
+				// XMP
+				assert.exists(exif.xmp)
 			})
 
 			it('TRM', async () => {
@@ -667,6 +670,9 @@ describe('parser (exif data)', () => {
 				assert.equal(exif.GPSMapDatum, 'WGS-84')
 				assert.equal(exif.latitude, 39.91763694444444)
 				assert.equal(exif.longitude, -2.8229761111111107)
+
+				// XMP
+				assert.exists(exif.xmp)
 			})
 
 		})
@@ -709,6 +715,10 @@ describe('parser (exif data)', () => {
 				assert.equal(exif.GPSTrack, 0)
 				assert.equal(exif.latitude, 0)
 				assert.equal(exif.longitude, 0)
+
+				// XMP
+                // TODO: Fix XMP
+				// assert.exists(exif.xmp)
 			})
 
 			it('TRM', async () => {
@@ -752,6 +762,10 @@ describe('parser (exif data)', () => {
 				assert.equal(exif.GPSMapDatum, 'WGS-84')
 				assert.equal(exif.latitude, 0)
 				assert.equal(exif.longitude, 0)
+
+				// XMP
+                // TODO: Fix XMP
+				// assert.exists(exif.xmp)
 			})
 
 		})
@@ -802,6 +816,9 @@ describe('parser (exif data)', () => {
 			assert.equal(exif.GPSDOP, 1)
 			assert.equal(exif.latitude, 50.7435566)
 			assert.equal(exif.longitude, 4.9281702)
+
+			// XMP
+			assert.exists(exif.xmp)
 		})
 
 		it('Delair UX11', async () => {
@@ -845,6 +862,9 @@ describe('parser (exif data)', () => {
             assert.equal(exif.GPSMapDatum, 'WGS-84')
             assert.equal(exif.latitude, 25.052168333333334)
             assert.equal(exif.longitude, -103.70058444444444)
+
+			// XMP
+			assert.exists(exif.xmp)
         })
 
         it('FLIR Tau 2 640 R 19mm', async () => {
@@ -942,6 +962,9 @@ describe('parser (exif data)', () => {
 			assert.equal(exif.GPSAltitude, 142.365088)
 			assert.equal(exif.latitude, 40.0594223)
 			assert.equal(exif.longitude, 23.402305)
+
+			// XMP
+			assert.exists(exif.xmp)
 		})
 
 		it('Wiris 2nd Gen 640 19mm', async () => {
