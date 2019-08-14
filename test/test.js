@@ -978,8 +978,7 @@ describe('parser (exif data)', () => {
 			assert.equal(exif.YResolution, 88)
 			assert.equal(exif.PlanarConfiguration, 1)
 			assert.equal(exif.ResolutionUnit, 3)
-			// TODO: Invalid date?
-			// assert.equal(exif.ModifyDate, Invalid Date)
+			assert.deepEqual(exif.ModifyDate, new Date('2017-09-15T22:00:00.000Z'))
 			assert.equal(exif.SampleFormat, 1)
 			assert.equal(exif.SMinSampleValue, 7296)
 			assert.equal(exif.SMaxSampleValue, 7774)

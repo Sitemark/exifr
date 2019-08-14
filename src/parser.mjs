@@ -689,7 +689,8 @@ function reviveDate(string) {
 		return null
 	string = string.trim()
 	var [dateString, timeString] = string.split(' ')
-	var [year, month, day] = dateString.split(':').map(Number)
+	var [year, month, day] = dateString.split(/[:\.]/).map(Number)
+    if (day > 1900) [year, day] = [day, year]
 	var date = new Date(year, month - 1, day)
 	if (timeString) {
 		var [hours, minutes, seconds] = timeString.split(':').map(Number)
