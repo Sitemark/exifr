@@ -960,7 +960,6 @@ describe('parser (exif data)', () => {
 		it('Wiris 2nd Gen 640 19mm', async () => {
 			const exif = await parse(buffers['Wiris_2nd_Gen_640_19mm.tiff'], options)
 			assert.exists(exif, `exif doesn't exist`)
-			// TODO: Unknown tags
 			assert.equal(exif.ImageWidth, 640)
 			assert.equal(exif.ImageHeight, 512)
 			assert.equal(exif.BitsPerSample, 16)
@@ -986,6 +985,8 @@ describe('parser (exif data)', () => {
 			assert.equal(exif.FocalLength, 19.0089453125)
 			assert.equal(exif.GPSVersionID, '2...2...0...0')
 			assert.deepEqual(exif.GPSLatitude, [ 49, 39, 2.89 ])
+			assert.equal(exif.GPSLatitudeRef, 'N')
+			assert.equal(exif.GPSLongitudeRef, 'E')
 			assert.deepEqual(exif.GPSLongitude, [ 15, 29, 50.24 ])
 			assert.equal(exif.GPSAltitudeRef, 'm')
 			assert.equal(exif.GPSAltitude, 504.395)

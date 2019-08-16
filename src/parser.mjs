@@ -600,7 +600,7 @@ export class ExifParser extends Reader {
 		if (this.ensureSegmentPosition('xmp', findXmp)) {
 		    // If there is an XMP segment, we can read it directly.
 			this.xmp = toString(this.buffer, this.xmpOffset, this.xmpOffset + this.xmpEnd, false)
-		} else if (this.options.xmp && (this.image.ApplicationNotes || this.exif.ApplicationNotes)) {
+		} else if (this.image.ApplicationNotes || this.exif.ApplicationNotes) {
 			// If the file doesn't contain the segment or if it's damaged, the XMP might be in ApplicationNotes.
 			this.xmp = String.fromCharCode.apply(String, this.image.ApplicationNotes || this.exif.ApplicationNotes)
 			delete this.image.ApplicationNotes
