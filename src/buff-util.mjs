@@ -1,3 +1,9 @@
+// Polyfill for Edge
+import TextEncodingPolyfill from 'text-encoding'
+if (typeof window !== 'undefined' && !window.TextDecoder) {
+	window.TextDecoder = TextEncodingPolyfill.TextDecoder
+}
+
 export var hasBuffer = typeof Buffer !== 'undefined'
 export var isBrowser = typeof navigator !== 'undefined'
 export var isNode = typeof global !== 'undefined' && typeof process !== 'undefined' && process.versions && process.versions.node
@@ -47,6 +53,12 @@ export function getFloat32(buffer, offset, littleEndian = false) {
 	else                    return buffer.readFloatBE(offset)
 }
 
+export function getFloat64(buffer, offset, littleEndian = false) {
+	if (buffer.getFloat64)  return buffer.getFloat64(offset, littleEndian)
+	else if (littleEndian)  return buffer.readDoubleLE(offset)
+	else                    return buffer.readDoubleBE(offset)
+}
+
 // KEEP IN MIND!
 // Node's buffer.slice() returns new Buffer pointing to the same memory.
 // Web's arrayBuffer.slice() returns new ArrayBuffer with newly copied data.
@@ -63,7 +75,7 @@ export function slice(buffer, start, end) {
 
 // NOTE: EXIF strings are ASCII encoded, but since ASCII is subset of UTF-8
 //       we can safely use it along with TextDecoder API.
-export function toString(buffer, start, end, clean = false) {
+export function toString(buffer, start, end, clean = true) {
 	let result = null;
 	if (buffer instanceof DataView) {
 		if (hasBuffer) {

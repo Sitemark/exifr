@@ -7,10 +7,11 @@ import {
 	getInt8,
 	getInt16,
 	getInt32,
+    getFloat32,
+	getFloat64,
 	slice,
 	toString
 } from './buff-util.mjs'
-import {getFloat32} from "./buff-util";
 
 const SIZE_LOOKUP = {
 	1: 1, // BYTE      - 8-bit unsigned integer
@@ -462,8 +463,8 @@ export class ExifParser extends Reader {
 			case 8:  return getInt16(chunk, offset, this.le)
 			case 9:  return getInt32(chunk, offset, this.le)
 			case 10: return getInt32(chunk, offset, this.le) / getInt32(chunk, offset + 4, this.le)
-			//case 11: return getFloat()  // TODO: buffer.readFloatBE() buffer.readFloatLE()
-			//case 12: return getDouble() // TODO: buffer.readDoubleBE() buffer.readDoubleLE()
+			case 11: return getFloat32(chunk, offset, this.le)
+			case 12: return getFloat64(chunk, offset, this.le)
 			case 13: return getUint32(chunk, offset, this.le)
 			default: throw new Error(`Invalid tiff type ${type}`)
 		}
@@ -596,11 +597,17 @@ export class ExifParser extends Reader {
 
 
 	parseXmpSegment() {
-		// Cancel if the file doesn't contain the segment or if it's damaged.
-		if (!this.ensureSegmentPosition('xmp', findXmp)) return
-
-		// Read XMP segment as string. We're not parsing the XML.
-		this.xmp = toString(this.buffer, this.xmpOffset, this.xmpOffset + this.xmpEnd)
+		if (this.ensureSegmentPosition('xmp', findXmp)) {
+		    // If there is an XMP segment, we can read it directly.
+			this.xmp = toString(this.buffer, this.xmpOffset, this.xmpOffset + this.xmpEnd, false)
+		} else if (this.image.ApplicationNotes || this.exif.ApplicationNotes) {
+			// If the file doesn't contain the segment or if it's damaged, the XMP might be in ApplicationNotes.
+			this.xmp = String.fromCharCode.apply(String, this.image.ApplicationNotes || this.exif.ApplicationNotes)
+			delete this.image.ApplicationNotes
+			delete this.exif.ApplicationNotes
+		} else {
+			return
+		}
 
 		// Trims the mess around.
 		if (this.options.postProcess) {
@@ -682,7 +689,8 @@ function reviveDate(string) {
 		return null
 	string = string.trim()
 	var [dateString, timeString] = string.split(' ')
-	var [year, month, day] = dateString.split(':').map(Number)
+	var [year, month, day] = dateString.split(/[:\.]/).map(Number)
+    if (day > 1900) [year, day] = [day, year]
 	var date = new Date(year, month - 1, day)
 	if (timeString) {
 		var [hours, minutes, seconds] = timeString.split(':').map(Number)

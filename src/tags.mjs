@@ -468,7 +468,13 @@ export const gps = {
 	0x001C: 'GPSAreaInformation',
 	0x001D: 'GPSDateStamp',
 	0x001E: 'GPSDifferential',
-	0x001F: 'GPSHPositioningError'
+	0x001F: 'GPSHPositioningError',
+	// The Wiris 2 contains this information in a different spot
+    0x7F01: 'GPSLatitudeRef',
+	0x7F03: 'GPSLongitudeRef',
+	// Added for the Tau 2
+	0xD000: 'GPSPitch',
+	0xD001: 'GPSRoll',
 }
 
 

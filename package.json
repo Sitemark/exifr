@@ -30,6 +30,9 @@
     "build": "rollup -c rollup.config.prod.js",
     "dev": "rollup -c rollup.config.dev.js -w"
   },
+  "dependencies": {
+    "text-encoding": "^0.7.0"
+  },
   "devDependencies": {
     "chai": "^4.2.0",
     "mocha": "^6.1.4",
