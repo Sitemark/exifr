@@ -1,3 +1,5 @@
+.DS_Store
+
 # Created by https://www.gitignore.io/api/webstorm+all
 # Edit at https://www.gitignore.io/?templates=webstorm+all
 
@@ -152,4 +154,5 @@ typings/
 .next
 
 package-lock.json
-index.js
+# We include the build because we're not an npm package
+# index.js
