@@ -1966,9 +1966,9 @@
 			if (this.ensureSegmentPosition('xmp', findXmp)) {
 			    // If there is an XMP segment, we can read it directly.
 				this.xmp = toString(this.buffer, this.xmpOffset, this.xmpOffset + this.xmpEnd, false);
-			} else if (this.image.ApplicationNotes || this.exif.ApplicationNotes) {
+			} else if ((this.image || {}).ApplicationNotes || (this.exif || {}).ApplicationNotes) {
 				// If the file doesn't contain the segment or if it's damaged, the XMP might be in ApplicationNotes.
-				this.xmp = String.fromCharCode.apply(String, this.image.ApplicationNotes || this.exif.ApplicationNotes);
+				this.xmp = String.fromCharCode.apply(String, (this.image || {}).ApplicationNotes || (this.exif || {}).ApplicationNotes);
 				delete this.image.ApplicationNotes;
 				delete this.exif.ApplicationNotes;
 			} else {
@@ -2057,12 +2057,12 @@
 		var [dateString, timeString] = string.split(' ');
 		var [year, month, day] = dateString.split(/[:\.]/).map(Number);
 	    if (day > 1900) [year, day] = [day, year];
-		var date = new Date(year, month - 1, day);
+		var date = new Date(Date.UTC(year, month - 1, day));
 		if (timeString) {
 			var [hours, minutes, seconds] = timeString.split(':').map(Number);
-			date.setHours(hours);
-			date.setMinutes(minutes);
-			date.setSeconds(seconds);
+			date.setUTCHours(hours);
+			date.setUTCMinutes(minutes);
+			date.setUTCSeconds(seconds);
 		}
 		return date
 	}
