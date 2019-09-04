@@ -334,7 +334,7 @@ describe('parser (exif data)', () => {
 			assert.equal(exif.MeteringMode, 2)
 		})
 
-        // Sitemark: We disabled this, because they get the timezone of the system parsing the exif data
+		// Sitemark: We disabled this, because they get the timezone of the system parsing the exif data
 		// it(`should revive dates as Date instance by default`, async () => {
 		// 	var exif = await parse(buffers['IMG_20180725_163423.jpg'])
 		// 	assert.exists(exif, `exif doesn't exist`)

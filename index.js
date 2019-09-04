@@ -2065,7 +2065,7 @@
 			date.setUTCSeconds(seconds);
 		}
 		const isoString = date.toISOString();
-	    // Drop everything starting from the ., removing the milliseconds and the timezone
+		// Drop everything starting from the ., removing the milliseconds and the timezone
 		return isoString.substring(0, isoString.indexOf('.'))
 	}
 
