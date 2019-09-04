@@ -2051,7 +2051,7 @@
 	}
 
 	function reviveDate(string) {
-		if (typeof string !== 'string')
+		if (typeof string !== 'string' || string.length == 0)
 			return null
 		string = string.trim();
 		var [dateString, timeString] = string.split(' ');
@@ -2064,7 +2064,9 @@
 			date.setUTCMinutes(minutes);
 			date.setUTCSeconds(seconds);
 		}
-		return date
+		const isoString = date.toISOString();
+	    // Drop everything starting from the ., removing the milliseconds and the timezone
+		return isoString.substring(0, isoString.indexOf('.'))
 	}
 
 	function setValueOrArrayOfValues(newValue, existingValue) {
