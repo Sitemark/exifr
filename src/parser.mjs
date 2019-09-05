@@ -685,20 +685,22 @@ function translateValue(key, val) {
 }
 
 function reviveDate(string) {
-	if (typeof string !== 'string')
+	if (typeof string !== 'string' || string.length == 0)
 		return null
 	string = string.trim()
 	var [dateString, timeString] = string.split(' ')
 	var [year, month, day] = dateString.split(/[:\.]/).map(Number)
     if (day > 1900) [year, day] = [day, year]
-	var date = new Date(year, month - 1, day)
+	var date = new Date(Date.UTC(year, month - 1, day))
 	if (timeString) {
 		var [hours, minutes, seconds] = timeString.split(':').map(Number)
-		date.setHours(hours)
-		date.setMinutes(minutes)
-		date.setSeconds(seconds)
+		date.setUTCHours(hours)
+		date.setUTCMinutes(minutes)
+		date.setUTCSeconds(seconds)
 	}
-	return date
+	const isoString = date.toISOString()
+	// Drop everything starting from the ., removing the milliseconds and the timezone
+	return isoString.substring(0, isoString.indexOf('.'))
 }
 
 function setValueOrArrayOfValues(newValue, existingValue) {
