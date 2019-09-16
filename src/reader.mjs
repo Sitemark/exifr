@@ -35,7 +35,7 @@ export default class Reader {
 		else if (isBrowser && arg instanceof Blob)
 			return this.readBlob(arg)
 		else
-			throw new Error('Invalid input argument')
+			throw new Error(`Invalid input argument: ${arg} (${typeof arg})`)
 	}
 
 	readString(string) {
@@ -46,7 +46,7 @@ export default class Reader {
 		else if (isNode)
 			return this.readFileFromDisk(string)
 		else
-			throw new Error('Invalid input argument')
+			throw new Error(`Invalid string input argument: ${string} (isBrowser: ${isBrowser}, isNode: ${isNode})`)
 	}
 
 	readUint8Array(uint8arr) {
