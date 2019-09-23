@@ -216,7 +216,8 @@ describe('parser (exif data)', () => {
 			'Delair_UX11.jpg',
 			'FLIR_Tau_2_640_R_19mm.jpg',
 			'Sensefly_Thermomap_9mm.tif',
-            'Wiris_2nd_Gen_640_19mm.tiff',
+			'Sensefly_SODA.JPG',
+			'Wiris_2nd_Gen_640_19mm.tiff',
 		]
 		for (let name of images) {
 			if (isNode)
@@ -574,14 +575,14 @@ describe('parser (exif data)', () => {
 
 		const options = { xmp: true, flir: true }
 
-        describe('DJI Zenmuse XT2 640 R 13mm', () => {
+		describe('DJI Zenmuse XT2 640 R 13mm', () => {
 
-        	it('RGB', async () => {
-        		const exif = await parse(buffers['DJI_Zenmuse_XT2_640_R_13mm.jpg'], options)
+			it('RGB', async () => {
+				const exif = await parse(buffers['DJI_Zenmuse_XT2_640_R_13mm.jpg'], options)
 				assert.exists(exif, `exif doesn't exist`)
 				assert.equal(exif.ImageDescription, 'DCIM/102MEDIA/DJI_0002.jpg')
 				assert.equal(exif.Make, 'DJI')
-                assert.equal(exif.Model, 'XT2')
+				assert.equal(exif.Model, 'XT2')
 				assert.equal(exif.PixelXDimension, 4000)
 				assert.equal(exif.PixelYDimension, 3000)
 				assert.equal(exif.Orientation, 1)
@@ -714,7 +715,7 @@ describe('parser (exif data)', () => {
 				assert.equal(exif.longitude, 0)
 
 				// XMP
-                // TODO: Fix XMP
+				// TODO: Fix XMP
 				// assert.exists(exif.xmp)
 			})
 
@@ -761,7 +762,7 @@ describe('parser (exif data)', () => {
 				assert.equal(exif.longitude, 0)
 
 				// XMP
-                // TODO: Fix XMP
+				// TODO: Fix XMP
 				// assert.exists(exif.xmp)
 			})
 
@@ -770,7 +771,7 @@ describe('parser (exif data)', () => {
 		it('MicaSense RedEdge M', async () => {
 			const exif = await parse(buffers['MicaSense_RedEdge_M.tif'], options)
 			assert.exists(exif, `exif doesn't exist`)
-            // TODO: Unknown tags
+			// TODO: Unknown tags
 			assert.equal(exif.SubfileType, 0)
 			assert.equal(exif.ImageWidth, 1280)
 			assert.equal(exif.ImageHeight, 960)
@@ -821,50 +822,50 @@ describe('parser (exif data)', () => {
 		it('Delair UX11', async () => {
 			const exif = await parse(buffers['Delair_UX11.jpg'], options)
 			assert.exists(exif, `exif doesn't exist`)
-            assert.equal(exif.ProcessingSoftware, 'Delair After Flight 46780')
-            assert.equal(exif.ImageDescription, '00000000')
-            assert.equal(exif.Make, 'Delair')
-            assert.equal(exif.Model, 'UX11-3B')
-            assert.equal(exif.XResolution, 300)
-            assert.equal(exif.YResolution, 300)
-            assert.equal(exif.ResolutionUnit, 2)
-            assert.equal(exif.ModifyDate, '2019-03-14T22:45:00')
-            assert.equal(exif.YCbCrPositioning, 1)
-            assert.equal(exif.ExposureTime, 0.000039)
-            assert.equal(exif.FNumber, 2.8)
-            assert.equal(exif.ISO, 100)
-            assert.equal(exif.SensitivityType, 3)
-            assert.equal(exif.ISOSpeed, 100)
-            assert.equal(exif.ExifVersion, '0230')
-            assert.equal(exif.DateTimeOriginal, '2019-03-14T22:45:00')
-            assert.equal(exif.DateTimeDigitized, '2019-03-14T22:45:00')
-            assert.equal(exif.FocalLength, 12)
-            assert.equal(exif.SubSecTime, '106')
-            assert.equal(exif.SubSecTimeOriginal, '106')
-            assert.equal(exif.SubSecTimeDigitized, '106')
-            assert.equal(exif.ColorSpace, 1)
-            assert.equal(exif.PixelXDimension, 5048)
-            assert.equal(exif.PixelYDimension, 4228)
-            assert.equal(exif.FocalPlaneXResolution, 5988.024)
-            assert.equal(exif.FocalPlaneYResolution, 5988.024)
-            assert.equal(exif.FocalPlaneResolutionUnit, 'Centimeter')
-            assert.equal(exif.BodySerialNumber, '4103356596')
-            assert.equal(exif.GPSVersionID, '3.2.0.0')
-            assert.equal(exif.GPSLatitudeRef, 'N')
-            assert.deepEqual(exif.GPSLatitude, [ 25, 3, 7.806 ])
-            assert.equal(exif.GPSLongitudeRef, 'W')
-            assert.deepEqual(exif.GPSLongitude, [ 103, 42, 2.104 ])
-            assert.equal(exif.GPSAltitudeRef, 0)
-            assert.equal(exif.GPSAltitude, 1797.834)
-            assert.equal(exif.GPSMapDatum, 'WGS-84')
-            assert.equal(exif.latitude, 25.052168333333334)
-            assert.equal(exif.longitude, -103.70058444444444)
+			assert.equal(exif.ProcessingSoftware, 'Delair After Flight 46780')
+			assert.equal(exif.ImageDescription, '00000000')
+			assert.equal(exif.Make, 'Delair')
+			assert.equal(exif.Model, 'UX11-3B')
+			assert.equal(exif.XResolution, 300)
+			assert.equal(exif.YResolution, 300)
+			assert.equal(exif.ResolutionUnit, 2)
+			assert.equal(exif.ModifyDate, '2019-03-14T22:45:00')
+			assert.equal(exif.YCbCrPositioning, 1)
+			assert.equal(exif.ExposureTime, 0.000039)
+			assert.equal(exif.FNumber, 2.8)
+			assert.equal(exif.ISO, 100)
+			assert.equal(exif.SensitivityType, 3)
+			assert.equal(exif.ISOSpeed, 100)
+			assert.equal(exif.ExifVersion, '0230')
+			assert.equal(exif.DateTimeOriginal, '2019-03-14T22:45:00')
+			assert.equal(exif.DateTimeDigitized, '2019-03-14T22:45:00')
+			assert.equal(exif.FocalLength, 12)
+			assert.equal(exif.SubSecTime, '106')
+			assert.equal(exif.SubSecTimeOriginal, '106')
+			assert.equal(exif.SubSecTimeDigitized, '106')
+			assert.equal(exif.ColorSpace, 1)
+			assert.equal(exif.PixelXDimension, 5048)
+			assert.equal(exif.PixelYDimension, 4228)
+			assert.equal(exif.FocalPlaneXResolution, 5988.024)
+			assert.equal(exif.FocalPlaneYResolution, 5988.024)
+			assert.equal(exif.FocalPlaneResolutionUnit, 'Centimeter')
+			assert.equal(exif.BodySerialNumber, '4103356596')
+			assert.equal(exif.GPSVersionID, '3.2.0.0')
+			assert.equal(exif.GPSLatitudeRef, 'N')
+			assert.deepEqual(exif.GPSLatitude, [ 25, 3, 7.806 ])
+			assert.equal(exif.GPSLongitudeRef, 'W')
+			assert.deepEqual(exif.GPSLongitude, [ 103, 42, 2.104 ])
+			assert.equal(exif.GPSAltitudeRef, 0)
+			assert.equal(exif.GPSAltitude, 1797.834)
+			assert.equal(exif.GPSMapDatum, 'WGS-84')
+			assert.equal(exif.latitude, 25.052168333333334)
+			assert.equal(exif.longitude, -103.70058444444444)
 
 			// XMP
 			assert.exists(exif.xmp)
-        })
+		})
 
-        it('FLIR Tau 2 640 R 19mm', async () => {
+		it('FLIR Tau 2 640 R 19mm', async () => {
 			const exif = await parse(buffers['FLIR_Tau_2_640_R_19mm.jpg'], options)
 			assert.exists(exif, `exif doesn't exist`)
 			assert.equal(exif.Make, 'FLIR Systems')
@@ -889,7 +890,7 @@ describe('parser (exif data)', () => {
 			assert.equal(exif.longitude, 4.692637972222222)
 
 			// FLIR FFF Segment
-            assert.exists(exif.flir)
+			assert.exists(exif.flir)
 			assert.equal(exif.flir.creator, 'ATAU_RBFO')
 			assert.equal(exif.flir.version, 100)
 			assert.equal(exif.flir.RawThermalImageWidth, 640)
@@ -960,6 +961,58 @@ describe('parser (exif data)', () => {
 			assert.equal(exif.GPSAltitude, 142.365088)
 			assert.equal(exif.latitude, 40.0594223)
 			assert.equal(exif.longitude, 23.402305)
+
+			// XMP
+			assert.exists(exif.xmp)
+		})
+
+		it('Sensefly S.O.D.A.', async () => {
+			const exif = await parse(buffers['Sensefly_SODA.JPG'], options)
+			console.log(exif);
+			assert.exists(exif, `exif doesn't exist`)
+			assert.equal(exif.ProcessingSoftware, 'eMotion 3.X.Xnb')
+			assert.equal(exif.Make, 'senseFly')
+			assert.equal(exif.Model, 'S.O.D.A.')
+			assert.equal(exif.XResolution, 72)
+			assert.equal(exif.YResolution, 72)
+			assert.equal(exif.ResolutionUnit, 2)
+			assert.equal(exif.Software, '1.3.0')
+			assert.equal(exif.UniqueCameraModel, 'senseFly S.O.D.A.')
+			assert.equal(exif.CameraSerialNumber, 'SI002001AA7I00076')
+			assert.equal(exif.ExposureTime, 0.001)
+			assert.equal(exif.FNumber, 2.8)
+			assert.equal(exif.ExposureProgram, 'Shutter priority')
+			assert.equal(exif.ISO, 250)
+			assert.equal(exif.DateTimeOriginal, '2019-03-18T11:01:20')
+			assert.equal(exif.ApertureValue, 3)
+			assert.equal(exif.ExposureBiasValue, 0)
+			assert.equal(exif.MaxApertureValue, 2.97)
+			assert.equal(exif.SubjectDistance, 4294967.295)
+			assert.equal(exif.FocalLength, 10.6)
+			assert.equal(exif.SubSecTimeOriginal, '00')
+			assert.equal(exif.PixelXDimension, 5472)
+			assert.equal(exif.PixelYDimension, 3648)
+			assert.equal(exif.FocalPlaneXResolution, 4167)
+			assert.equal(exif.FocalPlaneYResolution, 4167)
+			assert.equal(exif.FocalPlaneResolutionUnit, 'Centimeter')
+			assert.equal(exif.WhiteBalance, 'Manual white balance')
+			assert.equal(exif.FocalLengthIn35mmFormat, 28)
+			assert.equal(exif.BodySerialNumber, 'SI002001AA7I00076')
+			assert.equal(exif.LensModel, '')
+			assert.equal(exif.GPSVersionID, '2.3.0.0')
+			assert.equal(exif.GPSLatitudeRef, 'N')
+			assert.deepEqual(exif.GPSLatitude, [ 46, 35, 52.310528 ])
+			assert.equal(exif.GPSLongitudeRef, 'E')
+			assert.equal(exif.GPSLongitude, [ 6, 36, 31.664439 ])
+			assert.equal(exif.GPSAltitudeRef, 0)
+			assert.equal(exif.GPSAltitude, 758.7552)
+			assert.equal(exif.GPSTimeStamp, '11:1:20.284')
+			assert.equal(exif.GPSStatus, 'A')
+			assert.equal(exif.GPSMapDatum, 'WGS-84')
+			assert.equal(exif.GPSDateStamp, '2019:03:18')
+			assert.equal(exif.timestamp, '2019-03-18T11:01:20')
+			assert.equal(exif.latitude, 46.59786403555556)
+			assert.equal(exif.longitude, 6.6087956775)
 
 			// XMP
 			assert.exists(exif.xmp)
