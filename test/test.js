@@ -208,6 +208,7 @@ describe('parser (exif data)', () => {
 			'003b.jpg',
 			'exif-js-issue-124.tiff',
 			'noexif.jpg',
+			'DJI_Zenmuse_X3.JPG',
 			'DJI_Zenmuse_XT2_640_R_13mm.jpg',
 			'DJI_Zenmuse_XT2_640_R_13mm.tiff',
 			'FLIR_DUO_PRO_640_R_13mm.JPG',
@@ -574,6 +575,68 @@ describe('parser (exif data)', () => {
 	describe('cameras', () => {
 
 		const options = { xmp: true, flir: true }
+
+		it('DJI Zenmuse X3', async () => {
+			const exif = await parse(buffers['DJI_Zenmuse_X3.JPG'], options)
+			assert.exists(exif, `exif doesn't exist`)
+			assert.equal(exif.ImageDescription, "DCIM\\100MEDIA\\DJI_0002.JPG")
+			assert.equal(exif.Make, "DJI")
+			assert.equal(exif.Model, "FC350")
+			assert.equal(exif.Orientation, 1)
+			assert.equal(exif.XResolution, 72)
+			assert.equal(exif.YResolution, 72)
+			assert.equal(exif.ResolutionUnit, 2)
+			assert.equal(exif.Software, "v02.70.5440")
+			assert.equal(exif.ModifyDate, "2017-03-14T14:15:40")
+			assert.equal(exif.YCbCrPositioning, 1)
+			assert.equal(exif.ExposureTime, 0.001995)
+			assert.equal(exif.FNumber, 2.8)
+			assert.equal(exif.ExposureProgram, "Shutter priority")
+			assert.equal(exif.ISO, 139)
+			assert.equal(exif.ExifVersion, "0230")
+			assert.equal(exif.DateTimeOriginal, "2017-03-14T14:15:40")
+			assert.equal(exif.DateTimeDigitized, "2017-03-14T14:15:40")
+			assert.equal(exif.ComponentsConfiguration, "-, Cr, Cb, Y")
+			assert.equal(exif.CompressedBitsPerPixel, 3.377127111111111)
+			assert.equal(exif.ShutterSpeedValue, 8.968)
+			assert.equal(exif.ApertureValue, 2.97)
+			assert.equal(exif.ExposureBiasValue, 0)
+			assert.equal(exif.MaxApertureValue, 1)
+			assert.equal(exif.SubjectDistance, 0)
+			assert.equal(exif.MeteringMode, "CenterWeightedAverage")
+			assert.equal(exif.LightSource, "Unknown")
+			assert.equal(exif.Flash, "No flash function")
+			assert.equal(exif.FocalLength, 3.61)
+			assert.equal(exif.FlashpixVersion, "0010")
+			assert.equal(exif.ColorSpace, 1)
+			assert.equal(exif.PixelXDimension, 4000)
+			assert.equal(exif.PixelYDimension, 2250)
+			assert.equal(exif.InteroperabilityIFDPointer, 656)
+			assert.equal(exif.SceneType, "")
+			assert.equal(exif.CustomRendered, "Normal process")
+			assert.equal(exif.ExposureMode, "Auto exposure")
+			assert.equal(exif.WhiteBalance, "Auto white balance")
+			assert.equal(exif.FocalLengthIn35mmFormat, 20)
+			assert.equal(exif.SceneCaptureType, "Standard")
+			assert.equal(exif.GainControl, "None")
+			assert.equal(exif.Contrast, "Normal")
+			assert.equal(exif.Saturation, "Normal")
+			assert.equal(exif.Sharpness, "Normal")
+			assert.equal(exif.SubjectDistanceRange, "Unknown")
+			assert.equal(exif.GPSVersionID, "0.0.0.0")
+			assert.equal(exif.GPSLatitudeRef, "N")
+			assert.deepEqual(exif.GPSLatitude, [50, 51, 32.5779])
+			assert.equal(exif.GPSLongitudeRef, "E")
+			assert.deepEqual(exif.GPSLongitude, [4, 40, 43.3816])
+			assert.equal(exif.GPSAltitudeRef, 1)
+			assert.equal(exif.GPSAltitude, 116.63)
+			assert.equal(exif.latitude, 50.85904941666667)
+			assert.equal(exif.longitude, 4.678717111111111)
+
+			// XMP
+			assert.exists(exif.xmp)
+		})
+
 
 		describe('DJI Zenmuse XT2 640 R 13mm', () => {
 
