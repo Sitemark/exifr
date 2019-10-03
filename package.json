@@ -31,7 +31,8 @@
     "dev": "rollup -c rollup.config.dev.js -w"
   },
   "dependencies": {
-    "text-encoding": "^0.7.0"
+    "text-encoding": "^0.7.0",
+    "xmldom": "^0.1.27"
   },
   "devDependencies": {
     "chai": "^4.2.0",

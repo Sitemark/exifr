@@ -292,7 +292,7 @@ describe('parser (exif data)', () => {
 	describe('Other segments', () => {
 
 		it(`should contain XMP segment (if whole file buffer is provided and options.xmp is enabled)`, async () => {
-			var exif = await parse(buffers['cookiezen.jpg'], {mergeOutput: false, xmp: true})
+			var exif = await parse(buffers['cookiezen.jpg'], {mergeOutput: false, xmp: true, xmpParser: null})
 			assert.exists(exif, `exif doesn't exist`)
 			assert.typeOf(exif.xmp, 'string', `exif doesn't contain xmp`)
 		})
@@ -483,20 +483,20 @@ describe('parser (exif data)', () => {
 		})
 
 		it(`fast-exif #2 - should not skip exif if 0xFF byte precedes marker`, async () => {
-			var exif = await parse(buffers['fast-exif-issue-2.jpg'], true)
+			var exif = await parse(buffers['fast-exif-issue-2.jpg'], {})
 			assert.exists(exif, `exif doesn't exist`)
 			assert.equal(exif.ApertureValue, 5.655638)
 			assert.equal(exif.LensModel, '24.0-70.0 mm f/2.8')
 		})
 
 		it(`node-exif #58 - should properly detect EXIF`, async () => {
-			var exif = await parse(buffers['node-exif-issue-58.jpg'], true)
+			var exif = await parse(buffers['node-exif-issue-58.jpg'], { xmp: true })
 			assert.exists(exif, `exif doesn't exist`)
 			assert.exists(exif.xmp)
 		})
 
 		it(`exif-js #124`, async () => {
-			var exif = await parse(buffers['exif-js-issue-124.tiff'], true)
+			var exif = await parse(buffers['exif-js-issue-124.tiff'], {})
 			assert.exists(exif, `exif doesn't exist`)
 			assert.equal(exif.Make, 'FLIR')
 		})
@@ -635,6 +635,29 @@ describe('parser (exif data)', () => {
 
 			// XMP
 			assert.exists(exif.xmp)
+			assert.equal(exif.xmp['rdf:about'], 'DJI Meta Data')
+			assert.equal(exif.xmp['xmp:ModifyDate'], '2017-03-14')
+			assert.equal(exif.xmp['xmp:CreateDate'], '2017-03-14')
+			assert.equal(exif.xmp['tiff:Make'], 'DJI')
+			assert.equal(exif.xmp['tiff:Model'], 'FC350')
+			assert.equal(exif.xmp['dc:format'], 'image/jpeg')
+			assert.equal(exif.xmp['drone-dji:AbsoluteAltitude'], '-116.63')
+			assert.equal(exif.xmp['drone-dji:RelativeAltitude'], '+29.40')
+			assert.equal(exif.xmp['drone-dji:GimbalRollDegree'], '+0.00')
+			assert.equal(exif.xmp['drone-dji:GimbalYawDegree'], '+46.60')
+			assert.equal(exif.xmp['drone-dji:GimbalPitchDegree'], '-90.00')
+			assert.equal(exif.xmp['drone-dji:FlightRollDegree'], '-8.70')
+			assert.equal(exif.xmp['drone-dji:FlightYawDegree'], '+44.70')
+			assert.equal(exif.xmp['drone-dji:FlightPitchDegree'], '+0.20')
+			assert.equal(exif.xmp['drone-dji:FlightXSpeed'], '-0.20')
+			assert.equal(exif.xmp['drone-dji:FlightYSpeed'], '+0.10')
+			assert.equal(exif.xmp['drone-dji:FlightZSpeed'], '+0.00')
+			assert.equal(exif.xmp['drone-dji:CamReverse'], '0')
+			assert.equal(exif.xmp['drone-dji:GimbalReverse'], '0')
+			assert.equal(exif.xmp['crs:Version'], '7.0')
+			assert.equal(exif.xmp['crs:HasSettings'], 'False')
+			assert.equal(exif.xmp['crs:HasCrop'], 'False')
+			assert.equal(exif.xmp['crs:AlreadyApplied'], 'False')
 		})
 
 
@@ -689,6 +712,18 @@ describe('parser (exif data)', () => {
 
 				// XMP
 				assert.exists(exif.xmp)
+				assert.equal(exif.xmp['rdf:about'], 'DJI Meta Data')
+				assert.equal(exif.xmp['drone-dji:AbsoluteAltitude'], '881.609192')
+				assert.equal(exif.xmp['drone-dji:RelativeAltitude'], '34.400002')
+				assert.equal(exif.xmp['drone-dji:GimbalRollDegree'], '0.000000')
+				assert.equal(exif.xmp['drone-dji:GimbalYawDegree'], '89.300003')
+				assert.equal(exif.xmp['drone-dji:GimbalPitchDegree'], '-89.900002')
+				assert.equal(exif.xmp['drone-dji:FlightRollDegree'], '-6.500000')
+				assert.equal(exif.xmp['drone-dji:FlightYawDegree'], '90.000000')
+				assert.equal(exif.xmp['drone-dji:FlightPitchDegree'], '-2.400000')
+				assert.equal(exif.xmp['drone-dji:CamReverse'], '0')
+				assert.equal(exif.xmp['drone-dji:GimbalReverse'], '0')
+				assert.equal(exif.xmp['drone-dji:RtkFlag'], '0' )
 			})
 
 			it('TRM', async () => {
@@ -734,6 +769,28 @@ describe('parser (exif data)', () => {
 
 				// XMP
 				assert.exists(exif.xmp)
+				assert.equal(exif.xmp['rdf:about'], 'DJI Meta Data')
+				assert.equal(exif.xmp['drone-dji:AbsoluteAltitude'], '881.609192')
+				assert.equal(exif.xmp['drone-dji:RelativeAltitude'], '34.400002')
+				assert.equal(exif.xmp['drone-dji:GimbalRollDegree'], '0.000000')
+				assert.equal(exif.xmp['drone-dji:GimbalYawDegree'], '89.300003')
+				assert.equal(exif.xmp['drone-dji:GimbalPitchDegree'], '-89.900002')
+				assert.equal(exif.xmp['drone-dji:FlightRollDegree'], '-6.500000')
+				assert.equal(exif.xmp['drone-dji:FlightYawDegree'], '90.000000')
+				assert.equal(exif.xmp['drone-dji:FlightPitchDegree'], '-2.400000')
+				assert.equal(exif.xmp['drone-dji:CamReverse'], '0')
+				assert.equal(exif.xmp['drone-dji:GimbalReverse'], '0')
+				assert.equal(exif.xmp['drone-dji:RtkFlag'], '0')
+				assert.equal(exif.xmp['FLIR:TlinearGain'], '0.04')
+				assert.deepEqual(exif.xmp['FLIR:BandName'], [
+					{ value: 'LWIR', attributes: {}, description: 'LWIR' }
+				])
+				assert.deepEqual(exif.xmp['FLIR:CentralWavelength'], [
+					{ value: '10000', attributes: {}, description: '10000' }
+				])
+				assert.deepEqual(exif.xmp['FLIR:WavelengthFWHM'], [
+					{ value: '4500', attributes: {}, description: '4500' }
+				])
 			})
 
 		})
@@ -880,6 +937,71 @@ describe('parser (exif data)', () => {
 
 			// XMP
 			assert.exists(exif.xmp)
+			assert.equal(exif.xmp['rdf:about'], 'Pix4D Camera Information')
+			assert.equal(exif.xmp['MicaSense:BootTimestamp'], '388')
+			assert.deepEqual(exif.xmp['MicaSense:RadiometricCalibration'], [
+				{ value: '0.00025158791998971484', attributes: {}, description: '0.00025158791998971484' },
+				{ value: '7.5512765893711309e-08', attributes: {}, description: '7.5512765893711309e-08' },
+				{ value: '5.1259784808667235e-06', attributes: {}, description: '5.1259784808667235e-06' }
+			])
+			assert.equal(exif.xmp['MicaSense:FlightId'], 'G1R5fuqhYObiVDDUoPY0')
+			assert.equal(exif.xmp['MicaSense:CaptureId'], 'G01ph6LOYyFMzjpFQtbV')
+			assert.equal(exif.xmp['MicaSense:TriggerMethod'], '4')
+			assert.equal(exif.xmp['MicaSense:PressureAlt'], '69.928153991699219')
+			assert.deepEqual(exif.xmp['MicaSense:DarkRowValue'], [
+				{ value: '5296', attributes: {}, description: '5296' },
+				{ value: '5297', attributes: {}, description: '5297' },
+				{ value: '5103', attributes: {}, description: '5103' },
+				{ value: '5121', attributes: {}, description: '5121' }
+			])
+			assert.equal(exif.xmp['Camera:BandName'], 'Red')
+			assert.equal(exif.xmp['Camera:CentralWavelength'], '668')
+			assert.equal(exif.xmp['Camera:WavelengthFWHM'], '10')
+			assert.deepEqual(exif.xmp['Camera:VignettingCenter'], [
+				{ value: '612.48288362060873', attributes: {}, description: '612.48288362060873' },
+				{ value: '479.92852377966585', attributes: {}, description: '479.92852377966585' }
+			])
+			assert.deepEqual(exif.xmp['Camera:VignettingPolynomial'], [
+				{ value: '-0.00012364905090800595', attributes: {}, description: '-0.00012364905090800595' },
+				{ value: '1.5285817101337687e-06', attributes: {}, description: '1.5285817101337687e-06' },
+				{ value: '-1.248939732320383e-08', attributes: {}, description: '-1.248939732320383e-08' },
+				{ value: '3.615681445589148e-11', attributes: {}, description: '3.615681445589148e-11' },
+				{ value: '-4.6263897219279838e-14', attributes: {}, description: '-4.6263897219279838e-14' },
+				{ value: '2.1225983889505411e-17', attributes: {}, description: '2.1225983889505411e-17' }
+			])
+			assert.equal(exif.xmp['Camera:ModelType'], 'perspective')
+			assert.equal(exif.xmp['Camera:PrincipalPoint'], '2.28596,1.80131')
+			assert.equal(exif.xmp['Camera:PerspectiveFocalLength'], '5.4200334330371822')
+			assert.equal(exif.xmp['Camera:PerspectiveFocalLengthUnits'], 'mm')
+			assert.deepEqual(exif.xmp['Camera:PerspectiveDistortion'], [
+				{ value: '-0.10090111395504248', attributes: {}, description: '-0.10090111395504248' },
+				{ value: '0.14382399474370602', attributes: {}, description: '0.14382399474370602' },
+				{ value: '-0.026905090009498728', attributes: {}, description: '-0.026905090009498728' },
+				{ value: '-0.00018872727641257986', attributes: {}, description: '-0.00018872727641257986' },
+				{ value: '0.00052417834650675681', attributes: {}, description: '0.00052417834650675681' }
+			])
+			assert.equal(exif.xmp['Camera:BandSensitivity'], '0.15135489626960455')
+			assert.equal(exif.xmp['Camera:RigCameraIndex'], '2')
+			assert.equal(exif.xmp['Camera:IrradianceExposureTime'], '0.10100000351667404')
+			assert.equal(exif.xmp['Camera:IrradianceGain'], '16')
+			assert.equal(exif.xmp['Camera:Irradiance'], '0.84336173534393311')
+			assert.equal(exif.xmp['Camera:IrradianceYaw'], '85.346926915151712')
+			assert.equal(exif.xmp['Camera:IrradiancePitch'], '-8.7011030729229155')
+			assert.equal(exif.xmp['Camera:IrradianceRoll'], '-2.9012786841546623')
+			assert.equal(exif.xmp['DLS:Serial'], 'DL06-1820013-SC')
+			assert.equal(exif.xmp['DLS:SwVersion'], 'v1.0.1')
+			assert.equal(exif.xmp['DLS:SensorId'], '2')
+			assert.equal(exif.xmp['DLS:CenterWavelength'], '668')
+			assert.equal(exif.xmp['DLS:Bandwidth'], '10')
+			assert.equal(exif.xmp['DLS:TimeStamp'], '393084')
+			assert.equal(exif.xmp['DLS:Exposure'], '0.10100000351667404')
+			assert.equal(exif.xmp['DLS:Gain'], '16')
+			assert.equal(exif.xmp['DLS:SpectralIrradiance'], '0.84336173534393311')
+			assert.equal(exif.xmp['DLS:RawMeasurement'], '731')
+			assert.equal(exif.xmp['DLS:OffMeasurement'], '2878')
+			assert.equal(exif.xmp['DLS:Yaw'], '1.4895848811283643')
+			assert.equal(exif.xmp['DLS:Pitch'], '-0.15186289717790113')
+			assert.equal(exif.xmp['DLS:Roll'], '-0.050636865556427491' )
 		})
 
 		it('Delair UX11', async () => {
@@ -926,6 +1048,28 @@ describe('parser (exif data)', () => {
 
 			// XMP
 			assert.exists(exif.xmp)
+			assert.equal(exif.xmp['rdf:about'], '')
+			assert.equal(exif.xmp['Camera:Roll'], '3.7')
+			assert.equal(exif.xmp['Camera:Pitch'], '13.9')
+			assert.equal(exif.xmp['Camera:Yaw'], '62.1')
+			assert.equal(exif.xmp['Camera:GPSXYAccuracy'], '1.2')
+			assert.equal(exif.xmp['Camera:GPSZAccuracy'], '1.7')
+			assert.equal(exif.xmp['CRSInfo:VERTCRS'], 'EGM96')
+			assert.deepEqual(exif.xmp['Camera:TransformAlpha'], [
+				{ value: '1.500000', attributes: {}, description: '1.500000' },
+				{ value: '1.500000', attributes: {}, description: '1.500000' },
+				{ value: '1.500000', attributes: {}, description: '1.500000' }
+			])
+			assert.deepEqual(exif.xmp['Camera:TransformBeta'], [
+				{ value: '-2379.335363', attributes: {}, description: '-2379.335363' },
+				{ value: '-2379.335363', attributes: {}, description: '-2379.335363' },
+				{ value: '-2379.335363', attributes: {}, description: '-2379.335363' }
+			])
+			assert.deepEqual(exif.xmp['Camera:TransformGamma'], [
+				{ value: '2.200000', attributes: {}, description: '2.200000' },
+				{ value: '2.200000', attributes: {}, description: '2.200000' },
+				{ value: '2.200000', attributes: {}, description: '2.200000' }
+			])
 		})
 
 		it('FLIR Tau 2 640 R 19mm', async () => {
@@ -1027,11 +1171,20 @@ describe('parser (exif data)', () => {
 
 			// XMP
 			assert.exists(exif.xmp)
+			assert.equal(exif.xmp['rdf:about'], '')
+			assert.equal(exif.xmp['sensefly:GyroRate'], '1.098')
+			assert.equal(exif.xmp['sensefly:CamId'], '2')
+			assert.equal(exif.xmp['sensefly:Yaw'], '189.428')
+			assert.equal(exif.xmp['sensefly:Pitch'], '12.5908')
+			assert.equal(exif.xmp['sensefly:Roll'], '-3.384')
+			assert.equal(exif.xmp['sensefly:GPSXYAccuracy'], '5.367')
+			assert.equal(exif.xmp['sensefly:GPSZAccuracy'], '3.978')
+			assert.equal(exif.xmp['Camera:NominalCameraDistance'], '9.7')
+			assert.equal(exif.xmp['Camera:IsNormalized'], '1' )
 		})
 
 		it('Sensefly S.O.D.A.', async () => {
 			const exif = await parse(buffers['Sensefly_SODA.JPG'], options)
-			console.log(exif);
 			assert.exists(exif, `exif doesn't exist`)
 			assert.equal(exif.ProcessingSoftware, 'eMotion 3.X.Xnb')
 			assert.equal(exif.Make, 'senseFly')
@@ -1066,7 +1219,7 @@ describe('parser (exif data)', () => {
 			assert.equal(exif.GPSLatitudeRef, 'N')
 			assert.deepEqual(exif.GPSLatitude, [ 46, 35, 52.310528 ])
 			assert.equal(exif.GPSLongitudeRef, 'E')
-			assert.equal(exif.GPSLongitude, [ 6, 36, 31.664439 ])
+			assert.deepEqual(exif.GPSLongitude, [ 6, 36, 31.664439 ])
 			assert.equal(exif.GPSAltitudeRef, 0)
 			assert.equal(exif.GPSAltitude, 758.7552)
 			assert.equal(exif.GPSTimeStamp, '11:1:20.284')
@@ -1078,7 +1231,24 @@ describe('parser (exif data)', () => {
 			assert.equal(exif.longitude, 6.6087956775)
 
 			// XMP
-			assert.exists(exif.xmp)
+            assert.exists(exif.xmp)
+            assert.equal(exif.xmp['rdf:about'], '')
+            assert.equal(exif.xmp['sensefly:CamId'], '33')
+            assert.equal(exif.xmp['Camera:IMULinearVelocity'], '-2e+10,-2e+10,-2e+10')
+            assert.equal(exif.xmp['Camera:Pitch'], '13.811229')
+            assert.equal(exif.xmp['Camera:Roll'], '-6.932620')
+            assert.equal(exif.xmp['Camera:Yaw'], '-146.946594')
+            assert.equal(exif.xmp['Camera:GPSXYAccuracy'], '0.024764')
+            assert.equal(exif.xmp['Camera:GPSZAccuracy'], '0.036845')
+            assert.equal(exif.xmp['Camera:IMURollAccuracy'], '5')
+            assert.equal(exif.xmp['Camera:IMUPitchAccuracy'], '5')
+            assert.equal(exif.xmp['Camera:IMUYawAccuracy'], '10')
+            assert.equal(exif.xmp['Camera:RigName'], 'Duet T')
+            assert.equal(exif.xmp['Camera:RigCameraIndex'], '1')
+            assert.equal(exif.xmp['Platform:Manufacturer'], 'senseFly')
+            assert.equal(exif.xmp['Platform:Model'], 'eBee X')
+            assert.equal(exif.xmp['Platform:SerialNumber'], 'IX-x1-00057')
+            assert.equal(exif.xmp['Platform:SwVersion'], '3.X.Xnb 3254' )
 		})
 
 		it('Wiris 2nd Gen 640 19mm', async () => {
