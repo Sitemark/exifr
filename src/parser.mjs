@@ -613,7 +613,9 @@ export class ExifParser extends Reader {
 		if (this.options.postProcess) {
 			let start = this.xmp.indexOf('<x:xmpmeta')
 			let end = this.xmp.indexOf('x:xmpmeta>') + 10
-			this.xmp = this.xmp.slice(start, end)
+            if (start >= 0 && end > 0) {
+				this.xmp = this.xmp.slice(start, end)
+			}
 			// offer user to supply custom xml parser
 			if (this.options.xmpParser) this.xmp = this.options.xmpParser(this.xmp)
 		}

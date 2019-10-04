@@ -132,15 +132,55 @@
 	    read
 	};
 
+	const tagTypes = {
+
+	    // DJI
+	    'drone-dji:CamReverse': 'bool',
+	    'drone-dji:GimbalReverse': 'bool',
+	    'drone-dji:RtkFlag': 'bool',
+
+	    // CRS
+	    'crs:Version': 'string',
+
+	    // Camera
+	    'Camera:IsNormalized': 'bool',
+	};
+
 	function read(xmpString) {
 	    try {
 	        const doc = getDocument(xmpString);
 	        const rdf = getRDF(doc);
 
-	        return parseXMPObject(convertToObject(rdf, true));
+	        const xmp = parseXMPObject(convertToObject(rdf, true));
+	        Object.keys(xmp).forEach((key) => {
+	            xmp[key] = parseValue(key, xmp[key]);
+	        });
+	        return xmp;
 	    } catch (error) {
 	        return {};
 	    }
+	}
+
+	function parseValue(key, value) {
+	    if (value instanceof Array) {
+	        return value.map((val) => parseValue(key, val));
+	    } else if (value instanceof Object && 'value' in value) {
+	        value.value = parseValue(key, value.value);
+	        return value;
+	    } else if (tagTypes[key]) {
+	        if (tagTypes[key] === 'bool') {
+	            return ['True', 'true', '1'].includes(value);
+	        } else if (tagTypes[key] === 'string') {
+	            return value;
+	        }
+	    } else if (!isNaN(value) && value !== '') {
+	        return +value;
+	    } else if (['False', 'false'].includes(value)) {
+	        return false;
+	    } else if (['True', 'true'].includes(value)) {
+	        return true;
+	    }
+	    return value
 	}
 
 	function getDocument(xmlSource) {
@@ -2424,7 +2464,9 @@
 			if (this.options.postProcess) {
 				let start = this.xmp.indexOf('<x:xmpmeta');
 				let end = this.xmp.indexOf('x:xmpmeta>') + 10;
-				this.xmp = this.xmp.slice(start, end);
+	            if (start >= 0 && end > 0) {
+					this.xmp = this.xmp.slice(start, end);
+				}
 				// offer user to supply custom xml parser
 				if (this.options.xmpParser) this.xmp = this.options.xmpParser(this.xmp);
 			}
