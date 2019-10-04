@@ -41,8 +41,10 @@ function parseValue(key, value) {
     if (value instanceof Array) {
         return value.map((val) => parseValue(key, val));
     } else if (value instanceof Object && 'value' in value) {
-        value.value = parseValue(key, value.value);
-        return value;
+        return {
+            ...value,
+            value: parseValue(key, value.value),
+        };
     } else if (tagTypes[key]) {
         if (tagTypes[key] === 'bool') {
             return ['True', 'true', '1'].includes(value);
@@ -50,7 +52,7 @@ function parseValue(key, value) {
             return value;
         }
     } else if (!isNaN(value) && value !== '') {
-        return +value;
+        return Number(value);
     } else if (['False', 'false'].includes(value)) {
         return false;
     } else if (['True', 'true'].includes(value)) {
