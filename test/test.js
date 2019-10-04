@@ -66,7 +66,7 @@ async function createBase64Url(url) {
 			var reader = new FileReader()
 			reader.onloadend = () => resolve(reader.result)
 			reader.onerror = reject
-			reader.readAsDataURL(blob) 
+			reader.readAsDataURL(blob)
 		})
 	} else if (isNode) {
 		var buffer = await fs.readFile(url)
@@ -169,20 +169,20 @@ describe('reader (input formats)', () => {
 		assert.equal(exif.Make, 'DJI')
 	})
 
-/*
-TODO: rewrite chunked reader for 3.0.0
-	it(`scattered file, chunked mode, allow additional chunks - should succeed`, async () => {
-		let options = {wholeFile: undefined}
-		var exif = await parse(getPath('001.tif'), options)
-		assert.equal(exif.Make, 'DJI')
-	})
+	/*
+	TODO: rewrite chunked reader for 3.0.0
+		it(`scattered file, chunked mode, allow additional chunks - should succeed`, async () => {
+			let options = {wholeFile: undefined}
+			var exif = await parse(getPath('001.tif'), options)
+			assert.equal(exif.Make, 'DJI')
+		})
 
-	it(`scattered file, chunked mode, no additional chunks - should fail`, async () => {
-		let options = {wholeFile: false}
-		var exif = await parse(getPath('001.tif'), options)
-		assert.equal(exif, undefined)
-	})
-*/
+		it(`scattered file, chunked mode, no additional chunks - should fail`, async () => {
+			let options = {wholeFile: false}
+			var exif = await parse(getPath('001.tif'), options)
+			assert.equal(exif, undefined)
+		})
+	*/
 
 })
 
@@ -908,10 +908,10 @@ describe('parser (exif data)', () => {
 				assert.strictEqual(exif.xmp['rdf:about'], '')
 				assert.deepEqual(exif.xmp['Camera:BandName'], [
 					{ value: 'LWIR', attributes: {}, description: 'LWIR' },
-					])
+				])
 				assert.deepEqual(exif.xmp['Camera:CentralWavelength'], [
 					{ value: 10000, attributes: {}, description: '10000' },
-					])
+				])
 				assert.deepEqual(exif.xmp['Camera:WavelengthFWHM'], [
 					{ value: 4500, attributes: {}, description: '4500' },
 				])
@@ -1289,24 +1289,24 @@ describe('parser (exif data)', () => {
 			assert.strictEqual(exif.longitude, 6.6087956775)
 
 			// XMP
-            assert.exists(exif.xmp)
-            assert.strictEqual(exif.xmp['rdf:about'], '')
-            assert.strictEqual(exif.xmp['sensefly:CamId'], 33)
-            assert.strictEqual(exif.xmp['Camera:IMULinearVelocity'], '-2e+10,-2e+10,-2e+10')
-            assert.strictEqual(exif.xmp['Camera:Pitch'], 13.811229)
-            assert.strictEqual(exif.xmp['Camera:Roll'], -6.932620)
-            assert.strictEqual(exif.xmp['Camera:Yaw'], -146.946594)
-            assert.strictEqual(exif.xmp['Camera:GPSXYAccuracy'], 0.024764)
-            assert.strictEqual(exif.xmp['Camera:GPSZAccuracy'], 0.036845)
-            assert.strictEqual(exif.xmp['Camera:IMURollAccuracy'], 5)
-            assert.strictEqual(exif.xmp['Camera:IMUPitchAccuracy'], 5)
-            assert.strictEqual(exif.xmp['Camera:IMUYawAccuracy'], 10)
-            assert.strictEqual(exif.xmp['Camera:RigName'], 'Duet T')
-            assert.strictEqual(exif.xmp['Camera:RigCameraIndex'], 1)
-            assert.strictEqual(exif.xmp['Platform:Manufacturer'], 'senseFly')
-            assert.strictEqual(exif.xmp['Platform:Model'], 'eBee X')
-            assert.strictEqual(exif.xmp['Platform:SerialNumber'], 'IX-x1-00057')
-            assert.strictEqual(exif.xmp['Platform:SwVersion'], '3.X.Xnb 3254' )
+			assert.exists(exif.xmp)
+			assert.strictEqual(exif.xmp['rdf:about'], '')
+			assert.strictEqual(exif.xmp['sensefly:CamId'], 33)
+			assert.strictEqual(exif.xmp['Camera:IMULinearVelocity'], '-2e+10,-2e+10,-2e+10')
+			assert.strictEqual(exif.xmp['Camera:Pitch'], 13.811229)
+			assert.strictEqual(exif.xmp['Camera:Roll'], -6.932620)
+			assert.strictEqual(exif.xmp['Camera:Yaw'], -146.946594)
+			assert.strictEqual(exif.xmp['Camera:GPSXYAccuracy'], 0.024764)
+			assert.strictEqual(exif.xmp['Camera:GPSZAccuracy'], 0.036845)
+			assert.strictEqual(exif.xmp['Camera:IMURollAccuracy'], 5)
+			assert.strictEqual(exif.xmp['Camera:IMUPitchAccuracy'], 5)
+			assert.strictEqual(exif.xmp['Camera:IMUYawAccuracy'], 10)
+			assert.strictEqual(exif.xmp['Camera:RigName'], 'Duet T')
+			assert.strictEqual(exif.xmp['Camera:RigCameraIndex'], 1)
+			assert.strictEqual(exif.xmp['Platform:Manufacturer'], 'senseFly')
+			assert.strictEqual(exif.xmp['Platform:Model'], 'eBee X')
+			assert.strictEqual(exif.xmp['Platform:SerialNumber'], 'IX-x1-00057')
+			assert.strictEqual(exif.xmp['Platform:SwVersion'], '3.X.Xnb 3254' )
 		})
 
 		it('Wiris 2nd Gen 640 19mm', async () => {
