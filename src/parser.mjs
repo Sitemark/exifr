@@ -7,7 +7,7 @@ import {
 	getInt8,
 	getInt16,
 	getInt32,
-    getFloat32,
+	getFloat32,
 	getFloat64,
 	slice,
 	toString
@@ -50,7 +50,7 @@ function findAppSegment(buffer, appN, condition, callback, offset = 0) {
 		if (getUint8(buffer, offset) === 0xFF
 		 && getUint8(buffer, offset + 1) === nMarkerByte
 		 && condition(buffer, offset)) {
-		 	if (callback) return callback(buffer, offset)
+			if (callback) return callback(buffer, offset)
 			let start = offset
 			let size = getUint16(buffer, offset + 2)
 			let end = start + size
@@ -96,7 +96,7 @@ function isFlirFFFSegment(buffer, offset) {
 }
 
 function getFlirFFFSize(buffer, offset) {
-    // TODO: Implement size!
+	// TODO: Implement size!
 	var start = offset + 12
 	var size = getUint16(buffer, offset + 2)
 	var end = start + size
@@ -232,7 +232,7 @@ export class ExifParser extends Reader {
 		else
 			var output = {image, exif, gps, interop, thumbnail, iptc}
 		if (this.xmp) output.xmp = this.xmp
-        if (this.flir) output.flir = this.flir
+		if (this.flir) output.flir = this.flir
 		// Return undefined rather than empty object if there's no data.
 		for (let key in output)
 			if (output[key] === undefined)
@@ -503,7 +503,7 @@ export class ExifParser extends Reader {
 		this.flir = flir
 	}
 
-    parseFlirFFFDirectory(flir, le) {
+	parseFlirFFFDirectory(flir, le) {
 		let directoryOffset = getUint32(this.buffer, this.flirOffset + 24, le)
 		directoryOffset += this.flirOffset
 
@@ -531,7 +531,7 @@ export class ExifParser extends Reader {
 		const recordType = getUint16(this.buffer, recordOffset, le)
 		const recordSubType = getUint16(this.buffer, recordOffset + 2, le)
 
-        let recordLE = le
+		let recordLE = le
 		if (recordType === 1) {
 			if (recordSubType < 1 || recordSubType > 2) {
 				return
@@ -546,13 +546,13 @@ export class ExifParser extends Reader {
 	}
 
 	parseFlirFFFRecordTags(flir, recordType, recordContentOffset, le) {
-	    if (!(recordType in tags.flir)) {
+		if (!(recordType in tags.flir)) {
 			return
 		}
 
 		const recordTagsInfo = tags.flir[recordType];
 
-	    // TODO: What the fuck?!!
+		// TODO: What the fuck?!!
 		if (recordType !== 1) {
 			recordContentOffset += 120
 		}
@@ -598,7 +598,7 @@ export class ExifParser extends Reader {
 
 	parseXmpSegment() {
 		if (this.ensureSegmentPosition('xmp', findXmp)) {
-		    // If there is an XMP segment, we can read it directly.
+			// If there is an XMP segment, we can read it directly.
 			this.xmp = toString(this.buffer, this.xmpOffset, this.xmpOffset + this.xmpEnd, false)
 		} else if ((this.image || {}).ApplicationNotes || (this.exif || {}).ApplicationNotes) {
 			// If the file doesn't contain the segment or if it's damaged, the XMP might be in ApplicationNotes.
@@ -613,7 +613,7 @@ export class ExifParser extends Reader {
 		if (this.options.postProcess) {
 			let start = this.xmp.indexOf('<x:xmpmeta')
 			let end = this.xmp.indexOf('x:xmpmeta>') + 10
-            if (start >= 0 && end > 0) {
+			if (start >= 0 && end > 0) {
 				this.xmp = this.xmp.slice(start, end)
 			}
 			// offer user to supply custom xml parser
@@ -692,7 +692,7 @@ function reviveDate(string) {
 	string = string.trim()
 	var [dateString, timeString] = string.split(' ')
 	var [year, month, day] = dateString.split(/[:\.]/).map(Number)
-    if (day > 1900) [year, day] = [day, year]
+	if (day > 1900) [year, day] = [day, year]
 	var date = new Date(Date.UTC(year, month - 1, day))
 	if (timeString) {
 		var [hours, minutes, seconds] = timeString.split(':').map(Number)
