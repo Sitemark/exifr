@@ -171,7 +171,12 @@
 	        };
 	    } else if (tagTypes[key]) {
 	        if (tagTypes[key] === 'bool') {
-	            return ['True', 'true', '1'].includes(value);
+	            if (['True', 'true', '1'].includes(value)) {
+	                return true;
+	            } else if (['False', 'false', '0'].includes(value)) {
+	                return false;
+	            }
+	            throw new Error(`Unknown value ${value} for key ${key} to be parsed as bool.`)
 	        } else if (tagTypes[key] === 'string') {
 	            return value;
 	        }
