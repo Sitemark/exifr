@@ -1,3 +1,5 @@
+import XMPParser from "./xmp-parser";
+
 export const defaultOptions = {
 
 	// READING & PARSING
@@ -49,6 +51,9 @@ export const defaultOptions = {
 	interop: false,
 	// APP1 - IFD1 - Size and other information about embeded thumbnail.
 	thumbnail: false,
+
+	// XMP Parser function
+	xmpParser: XMPParser.read,
 
 }
 
