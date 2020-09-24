@@ -214,11 +214,14 @@ describe('parser (exif data)', () => {
 			'FLIR_DUO_PRO_640_R_13mm.JPG',
 			'FLIR_DUO_PRO_640_R_13mm.TIFF',
 			'MicaSense_RedEdge_M.tif',
+			'MicaSense_Altum_TRM.tif',
+			'MicaSense_Altum_MSP.tif',
 			'Delair_UX11.jpg',
 			'FLIR_Tau_2_640_R_19mm.jpg',
 			'Sensefly_Thermomap_9mm.tif',
 			'Sensefly_SODA.JPG',
 			'Wiris_2nd_Gen_640_19mm.tiff',
+			'WingtraOne_Sony_DSC_RX1RII.JPG',
 			"DJI_ZH20T.JPG",
 		]
 		for (let name of images) {
@@ -1063,6 +1066,364 @@ describe('parser (exif data)', () => {
 			assert.strictEqual(exif.xmp['DLS:Roll'], -0.050636865556427491 )
 		})
 
+		describe('MicaSense Altum', () => {
+
+			it('MSP', async () => {
+				const exif = await parse(buffers['MicaSense_Altum_MSP.tif'], options)
+				assert.exists(exif, `exif doesn't exist`)
+				// TODO: Unknown tags: 48020, 48021, 48022
+				assert.strictEqual(exif.SubfileType, 0)
+				assert.strictEqual(exif.ImageWidth, 2064)
+				assert.strictEqual(exif.ImageHeight, 1544)
+				assert.strictEqual(exif.BitsPerSample, 16)
+				assert.strictEqual(exif.Compression, 1)
+				assert.strictEqual(exif.PhotometricInterpretation, 1)
+				assert.strictEqual(exif.Make, 'MicaSense')
+				assert.strictEqual(exif.Model, 'Altum')
+				assert.deepEqual(exif.StripOffsets, [
+					8,  412808,  825608,
+					1238408, 1651208, 2064008,
+					2476808, 2889608, 3302408,
+					3715208, 4128008, 4540808,
+					4953608, 5366408, 5779208,
+					6192008
+				])
+				assert.strictEqual(exif.Orientation, 1)
+				assert.strictEqual(exif.SamplesPerPixel, 1)
+				assert.strictEqual(exif.RowsPerStrip, 100)
+				assert.deepEqual(exif.StripByteCounts, [
+					412800, 412800, 412800,
+					412800, 412800, 412800,
+					412800, 412800, 412800,
+					412800, 412800, 412800,
+					412800, 412800, 412800,
+					181632
+				])
+				assert.strictEqual(exif.PlanarConfiguration, 1)
+				assert.strictEqual(exif.Software, 'v2.0.0')
+				assert.strictEqual(exif.ModifyDate, '2020-05-24T16:14:05')
+				assert.deepEqual(exif.BlackLevelRepeatDim, [ 2, 2 ])
+				assert.deepEqual(exif.BlackLevel, [ 4800, 4800, 4800, 4800 ])
+				assert.ok(exif.OpcodeList3 instanceof Buffer)
+				assert.strictEqual(exif.ExposureTime, 0.00156121)
+				assert.strictEqual(exif.FNumber, 1.8)
+				assert.strictEqual(exif.ExposureProgram, 'Normal program')
+				assert.strictEqual(exif.ISOSpeed, 800)
+				assert.strictEqual(exif.ExifVersion, '0230')
+				assert.strictEqual(exif.DateTimeOriginal, '2020-05-24T16:14:05')
+				assert.strictEqual(exif.DateTimeDigitized, '2020-05-24T16:14:05')
+				assert.strictEqual(exif.MeteringMode, 'Average')
+				assert.strictEqual(exif.FocalLength, 8)
+				assert.strictEqual(exif.SubSecTime, '499630718')
+				assert.strictEqual(exif.FocalPlaneXResolution, 289.855072)
+				assert.strictEqual(exif.FocalPlaneYResolution, 289.855072)
+				assert.strictEqual(exif.FocalPlaneResolutionUnit, 4)
+				assert.strictEqual(exif.BodySerialNumber, 'AL05-1934188-SC')
+				assert.strictEqual(exif.GPSVersionID, '2.2.0.0')
+				assert.strictEqual(exif.GPSLatitudeRef, 'N')
+				assert.deepEqual(exif.GPSLatitude, [ 48, 12, 8.77572 ])
+				assert.strictEqual(exif.GPSLongitudeRef, 'E')
+				assert.deepEqual(exif.GPSLongitude, [ 6, 24, 9.88776 ])
+				assert.strictEqual(exif.GPSAltitudeRef, 0)
+				assert.strictEqual(exif.GPSAltitude, 373.829)
+				assert.strictEqual(exif.GPSDOP, 0)
+				assert.strictEqual(exif.latitude, 48.202437700000004)
+				assert.strictEqual(exif.longitude, 6.4027466)
+
+				// XMP
+				assert.strictEqual(exif.xmp['rdf:about'], 'Pix4D Camera Information')
+				assert.strictEqual(exif.xmp['Camera:RigName'], 'Altum')
+				assert.strictEqual(exif.xmp['Camera:BandName'], 'Red edge')
+				assert.strictEqual(exif.xmp['Camera:CentralWavelength'], 717)
+				assert.strictEqual(exif.xmp['Camera:WavelengthFWHM'], 12)
+				assert.strictEqual(exif.xmp['Camera:ModelType'], 'perspective')
+				assert.strictEqual(exif.xmp['Camera:PrincipalPoint'], '3.55453,2.56811')
+				assert.strictEqual(exif.xmp['Camera:PerspectiveFocalLength'], 7.8035429249999995)
+				assert.strictEqual(exif.xmp['Camera:PerspectiveFocalLengthUnits'], 'mm')
+				assert.deepEqual(exif.xmp['Camera:PerspectiveDistortion'], [
+					{
+						value: -0.1400263,
+						attributes: {},
+						description: '-0.14002629999999999'
+					},
+					{
+						value: 0.2719171,
+						attributes: {},
+						description: '0.27191710000000002'
+					},
+					{
+						value: -0.2464207,
+						attributes: {},
+						description: '-0.24642069999999999'
+					},
+					{
+						value: 0.0004405664,
+						attributes: {},
+						description: '0.00044056640000000001'
+					},
+					{
+						value: -0.0002721236,
+						attributes: {},
+						description: '-0.00027212360000000002'
+					}
+				])
+				assert.deepEqual(exif.xmp['Camera:VignettingCenter'], [
+					{
+						value: 1030.9989,
+						attributes: {},
+						description: '1030.9989'
+					},
+					{
+						value: 771.4899,
+						attributes: {},
+						description: '771.48990000000003'
+					}
+				])
+				assert.deepEqual(exif.xmp['Camera:VignettingPolynomial'], [
+					{
+						value: 0.0005019178,
+						attributes: {},
+						description: '0.0005019178'
+					},
+					{
+						value: -0.000003113451,
+						attributes: {},
+						description: '-3.1134510000000001e-06'
+					},
+					{
+						value: 6.180023e-9,
+						attributes: {},
+						description: '6.1800229999999996e-09'
+					},
+					{
+						value: -7.505961e-12,
+						attributes: {},
+						description: '-7.5059609999999998e-12'
+					},
+					{
+						value: 4.614833e-15,
+						attributes: {},
+						description: '4.6148330000000003e-15'
+					},
+					{
+						value: -1.099016e-18,
+						attributes: {},
+						description: '-1.099016e-18'
+					}
+				])
+				assert.strictEqual(exif.xmp['Camera:BandSensitivity'], 0.054773235383806254)
+				assert.strictEqual(exif.xmp['Camera:RigRelatives'], '-0.127427, 0.183305, 0.058653')
+				assert.strictEqual(exif.xmp['Camera:RigCameraIndex'], 4)
+				assert.strictEqual(exif.xmp['Camera:RigRelativesReferenceRigCameraIndex'], 1)
+				assert.strictEqual(exif.xmp['Camera:GPSXYAccuracy'], 1.2660000324249268)
+				assert.strictEqual(exif.xmp['Camera:GPSZAccuracy'], 1.7960000038146973)
+				assert.strictEqual(exif.xmp['Camera:Irradiance'], 17.480027584834886)
+				assert.strictEqual(exif.xmp['Camera:IrradianceYaw'], -73.92680924112054)
+				assert.strictEqual(exif.xmp['Camera:IrradiancePitch'], 1.8317880329439193)
+				assert.strictEqual(exif.xmp['Camera:IrradianceRoll'], 2.173869336004512)
+				assert.strictEqual(exif.xmp['MicaSense:BootTimestamp'], 252)
+				assert.deepEqual(exif.xmp['MicaSense:RadiometricCalibration'], [
+					{
+						value: 0.0002873074,
+						attributes: {},
+						description: '0.00028730740000000002'
+					},
+					{
+						value: 5.132566e-9,
+						attributes: {},
+						description: '5.1325660000000002e-09'
+					},
+					{
+						value: 0.00004434347,
+						attributes: {},
+						description: '4.4343469999999998e-05'
+					}
+				])
+				assert.strictEqual(exif.xmp['MicaSense:ImagerTemperatureC'], 26.83)
+				assert.strictEqual(exif.xmp['MicaSense:FlightId'], 'F6jw5edf8CKQuysC6Ze6')
+				assert.strictEqual(exif.xmp['MicaSense:CaptureId'], 'j0QNcuaNsiIJN3yCl26P')
+				assert.strictEqual(exif.xmp['MicaSense:TriggerMethod'], 2)
+				assert.strictEqual(exif.xmp['MicaSense:PressureAlt'], 0)
+				assert.deepEqual(exif.xmp['MicaSense:DarkRowValue'], [
+					{ value: 3934, attributes: {}, description: '3934' },
+					{ value: 3934, attributes: {}, description: '3934' },
+					{ value: 3934, attributes: {}, description: '3934' },
+					{ value: 3934, attributes: {}, description: '3934' }
+				])
+				assert.strictEqual(exif.xmp['DLS:Serial'], 'DA03-2002222-MS')
+				assert.strictEqual(exif.xmp['DLS:SwVersion'], 'v1.2.4')
+				assert.strictEqual(exif.xmp['DLS:CenterWavelength'], 717)
+				assert.strictEqual(exif.xmp['DLS:Bandwidth'], 12)
+				assert.strictEqual(exif.xmp['DLS:TimeStamp'], 264730)
+				assert.strictEqual(exif.xmp['DLS:SpectralIrradiance'], 17.480027584834886)
+				assert.strictEqual(exif.xmp['DLS:HorizontalIrradiance'], 14.211778962123237)
+				assert.strictEqual(exif.xmp['DLS:DirectIrradiance'], 13.999149989113818)
+				assert.strictEqual(exif.xmp['DLS:ScatteredIrradiance'], 7.594971827479635)
+				assert.strictEqual(exif.xmp['DLS:SolarElevation'], 0.4923042795502525)
+				assert.strictEqual(exif.xmp['DLS:SolarAzimuth'], 4.721351881011877)
+				assert.deepEqual(exif.xmp['DLS:EstimatedDirectLightVector'], [
+					{
+						value: 0.6277619625516219,
+						attributes: {},
+						description: '0.62776196255162187'
+					},
+					{
+						value: -0.37169480418569933,
+						attributes: {},
+						description: '-0.37169480418569933'
+					},
+					{
+						value: -0.6839282790722216,
+						attributes: {},
+						description: '-0.68392827907222165'
+					}
+				])
+				assert.strictEqual(exif.xmp['DLS:Yaw'], -1.2902662267513239)
+				assert.strictEqual(exif.xmp['DLS:Pitch'], 0.03197073237350175)
+				assert.strictEqual(exif.xmp['DLS:Roll'], 0.03794117742142165)
+			})
+
+			it('TRM', async () => {
+				const exif = await parse(buffers['MicaSense_Altum_TRM.tif'], options)
+				assert.exists(exif, `exif doesn't exist`)
+				// TODO: Unknown tags: 48020, 48021, 48022
+				assert.strictEqual(exif.SubfileType, 0)
+				assert.strictEqual(exif.ImageWidth, 160)
+				assert.strictEqual(exif.ImageHeight, 120)
+				assert.strictEqual(exif.BitsPerSample, 16)
+				assert.strictEqual(exif.Compression, 1)
+				assert.strictEqual(exif.PhotometricInterpretation, 1)
+				assert.strictEqual(exif.Make, 'MicaSense')
+				assert.strictEqual(exif.Model, 'Altum')
+				assert.deepEqual(exif.StripOffsets, [ 8, 32008 ])
+				assert.strictEqual(exif.Orientation, 1)
+				assert.strictEqual(exif.SamplesPerPixel, 1)
+				assert.strictEqual(exif.RowsPerStrip, 100)
+				assert.deepEqual(exif.StripByteCounts, [ 32000, 6400 ])
+				assert.strictEqual(exif.PlanarConfiguration, 1)
+				assert.strictEqual(exif.Software, 'v2.0.0')
+				assert.strictEqual(exif.ModifyDate, '2020-05-24T16:15:31')
+				assert.ok(exif.OpcodeList3 instanceof Buffer)
+				assert.strictEqual(exif.ExposureTime, 0.033333333)
+				assert.strictEqual(exif.FNumber, 1.1)
+				assert.strictEqual(exif.ExposureProgram, 'Normal program')
+				assert.strictEqual(exif.ISOSpeed, 100)
+				assert.strictEqual(exif.ExifVersion, '0230')
+				assert.strictEqual(exif.DateTimeOriginal, '2020-05-24T16:15:31')
+				assert.strictEqual(exif.DateTimeDigitized, '2020-05-24T16:15:31')
+				assert.strictEqual(exif.MeteringMode, 'Average')
+				assert.strictEqual(exif.FocalLength, 1.77)
+				assert.strictEqual(exif.SubSecTime, '531891187')
+				assert.strictEqual(exif.FocalPlaneXResolution, 83.3333333)
+				assert.strictEqual(exif.FocalPlaneYResolution, 83.3333333)
+				assert.strictEqual(exif.FocalPlaneResolutionUnit, 4)
+				assert.strictEqual(exif.BodySerialNumber, 'AL05-1934188-SC')
+				assert.strictEqual(exif.GPSVersionID, '2.2.0.0')
+				assert.strictEqual(exif.GPSLatitudeRef, 'N')
+				assert.deepEqual(exif.GPSLatitude, [ 48, 12, 7.34256 ])
+				assert.strictEqual(exif.GPSLongitudeRef, 'E')
+				assert.deepEqual(exif.GPSLongitude, [ 6, 24, 10.26756 ])
+				assert.strictEqual(exif.GPSAltitudeRef, 0)
+				assert.strictEqual(exif.GPSAltitude, 396.324)
+				assert.strictEqual(exif.GPSDOP, 0)
+				assert.strictEqual(exif.latitude, 48.202039600000006)
+				assert.strictEqual(exif.longitude, 6.4028521000000005)
+
+				// XMP
+				assert.strictEqual(exif.xmp['rdf:about'], 'Pix4D Camera Information')
+				assert.strictEqual(exif.xmp['Camera:RigName'], 'Altum')
+				assert.strictEqual(exif.xmp['Camera:BandName'], 'LWIR')
+				assert.strictEqual(exif.xmp['Camera:CentralWavelength'], 11000)
+				assert.strictEqual(exif.xmp['Camera:WavelengthFWHM'], 6000)
+				assert.strictEqual(exif.xmp['Camera:ModelType'], 'perspective')
+				assert.strictEqual(exif.xmp['Camera:PrincipalPoint'], '0.996829,0.729053')
+				assert.strictEqual(exif.xmp['Camera:PerspectiveFocalLength'], 2.013042)
+				assert.strictEqual(exif.xmp['Camera:PerspectiveFocalLengthUnits'], 'mm')
+				assert.deepEqual(exif.xmp['Camera:PerspectiveDistortion'], [
+					{
+						value: -0.3614497,
+						attributes: {},
+						description: '-0.36144969999999998'
+					},
+					{
+						value: 0.4130033,
+						attributes: {},
+						description: '0.41300330000000002'
+					},
+					{
+						value: -0.5163066,
+						attributes: {},
+						description: '-0.51630659999999995'
+					},
+					{ value: 0.003318821, attributes: {}, description: '0.003318821' },
+					{
+						value: 0.0005368207,
+						attributes: {},
+						description: '0.00053682070000000005'
+					}
+				])
+				assert.strictEqual(exif.xmp['Camera:BandSensitivity'], 'inf')
+				assert.strictEqual(exif.xmp['Camera:RigRelatives'], '-0.267442, 0.130632, 0.126688')
+				assert.strictEqual(exif.xmp['Camera:RigCameraIndex'], 5)
+				assert.strictEqual(exif.xmp['Camera:RigRelativesReferenceRigCameraIndex'], 1)
+				assert.strictEqual(exif.xmp['Camera:GPSXYAccuracy'], 0.9760000109672546)
+				assert.strictEqual(exif.xmp['Camera:GPSZAccuracy'], 1.4079999923706055)
+				assert.strictEqual(exif.xmp['Camera:IrradianceYaw'], 91.6579239059755)
+				assert.strictEqual(exif.xmp['Camera:IrradiancePitch'], -1.0693416258173318)
+				assert.strictEqual(exif.xmp['Camera:IrradianceRoll'], 1.8326883911906495)
+				assert.strictEqual(exif.xmp['MicaSense:BootTimestamp'], 338)
+				assert.deepEqual(exif.xmp['MicaSense:RadiometricCalibration'], [
+					{ value: 0, attributes: {}, description: '0' },
+					{ value: 0, attributes: {}, description: '0' },
+					{ value: 0, attributes: {}, description: '0' }
+				])
+				assert.strictEqual(exif.xmp['MicaSense:SceneTemperature'], 17.53000000000003)
+				assert.strictEqual(exif.xmp['MicaSense:ImagerTemperatureC'], 20.010003662109398)
+				assert.strictEqual(exif.xmp['MicaSense:FlightId'], 'F6jw5edf8CKQuysC6Ze6')
+				assert.strictEqual(exif.xmp['MicaSense:CaptureId'], 'MVKJH2SswDyQBblb9faX')
+				assert.strictEqual(exif.xmp['MicaSense:TriggerMethod'], 2)
+				assert.strictEqual(exif.xmp['MicaSense:PressureAlt'], 0)
+				assert.deepEqual(exif.xmp['MicaSense:ThermalCalibrationParameters'], [
+					{
+						value: 0.7320556640625,
+						attributes: {},
+						description: '0.7320556640625'
+					},
+					{
+						value: 293.1700134277344,
+						attributes: {},
+						description: '293.17001342773438'
+					},
+					{
+						value: 356132,
+						attributes: {},
+						description: '356132'
+					},
+					{
+						value: 1435,
+						attributes: {},
+						description: '1435'
+					},
+					{
+						value: 1,
+						attributes: {},
+						description: '1'
+					},
+					{
+						value: 444.726,
+						attributes: {},
+						description: '444.726'
+					}
+				])
+				assert.strictEqual(exif.xmp['DLS:Serial'], 'DA03-2002222-MS')
+				assert.strictEqual(exif.xmp['DLS:SwVersion'], 'v1.2.4')
+				assert.strictEqual(exif.xmp['DLS:Yaw'], 1.5997325577016939)
+				assert.strictEqual(exif.xmp['DLS:Pitch'], -0.01866353219914164)
+				assert.strictEqual(exif.xmp['DLS:Roll'], 0.03198644658935467)
+			})
+
+		})
+
 		it('Delair UX11', async () => {
 			const exif = await parse(buffers['Delair_UX11.jpg'], options)
 			assert.exists(exif, `exif doesn't exist`)
@@ -1439,6 +1800,59 @@ describe('parser (exif data)', () => {
 			assert.strictEqual(exif.xmp['crs:HasSettings'], false)
 			assert.strictEqual(exif.xmp['crs:HasCrop'], false)
 			assert.strictEqual(exif.xmp['crs:AlreadyApplied'], false)
+		})
+
+		it('WingtraOne Sony DSC-RX1RII', async () => {
+			const exif = await parse(buffers['WingtraOne_Sony_DSC_RX1RII.JPG'], options)
+			assert.exists(exif, `exif doesn't exist`)
+			assert.strictEqual(exif.ImageDescription, '                               ')
+			assert.strictEqual(exif.Make, 'SONY')
+			assert.strictEqual(exif.Model, 'DSC-RX1RM2')
+			assert.strictEqual(exif.Orientation, 1)
+			assert.strictEqual(exif.XResolution, 350)
+			assert.strictEqual(exif.YResolution, 350)
+			assert.strictEqual(exif.ResolutionUnit, 2)
+			assert.strictEqual(exif.Software, 'DSC-RX1RM2 v1.00')
+			assert.strictEqual(exif.ModifyDate, '2019-03-18T13:15:23')
+			assert.strictEqual(exif.YCbCrPositioning, 2)
+			assert.ok(exif.PrintIM instanceof Buffer)
+			assert.strictEqual(exif.ExposureTime, 0.0005)
+			assert.strictEqual(exif.FNumber, 4.5)
+			assert.strictEqual(exif.ExposureProgram, 'Manual')
+			assert.strictEqual(exif.ISO, 3200)
+			assert.strictEqual(exif.SensitivityType, 2)
+			assert.strictEqual(exif.RecommendedExposureIndex, 3200)
+			assert.strictEqual(exif.ExifVersion, '0230')
+			assert.strictEqual(exif.DateTimeOriginal, '2019-03-18T13:15:23')
+			assert.strictEqual(exif.DateTimeDigitized, '2019-03-18T13:15:23')
+			assert.strictEqual(exif.ComponentsConfiguration, 'Y, Cb, Cr, -')
+			assert.strictEqual(exif.CompressedBitsPerPixel, 3)
+			assert.strictEqual(exif.BrightnessValue, 5.96640625)
+			assert.strictEqual(exif.ExposureBiasValue, 0)
+			assert.strictEqual(exif.MaxApertureValue, 2)
+			assert.strictEqual(exif.MeteringMode, 'Pattern')
+			assert.strictEqual(exif.LightSource, 'Unknown')
+			assert.strictEqual(exif.Flash, 'Flash did not fire, compulsory flash mode')
+			assert.strictEqual(exif.FocalLength, 35)
+			assert.ok(exif.MakerNote instanceof Buffer)
+			assert.ok(exif.UserComment instanceof Buffer)
+			assert.strictEqual(exif.FlashpixVersion, '0100')
+			assert.strictEqual(exif.ColorSpace, 1)
+			assert.strictEqual(exif.PixelXDimension, 7952)
+			assert.strictEqual(exif.PixelYDimension, 5304)
+			assert.strictEqual(exif.InteroperabilityIFDPointer, 34242)
+			assert.ok(exif.FileSource instanceof Buffer)
+			assert.strictEqual(exif.SceneType, 'Directly photographed')
+			assert.strictEqual(exif.CustomRendered, 'Normal process')
+			assert.strictEqual(exif.ExposureMode, 'Manual exposure')
+			assert.strictEqual(exif.WhiteBalance, 'Auto white balance')
+			assert.strictEqual(exif.DigitalZoomRatio, 1)
+			assert.strictEqual(exif.FocalLengthIn35mmFormat, 35)
+			assert.strictEqual(exif.SceneCaptureType, 'Standard')
+			assert.strictEqual(exif.Contrast, 'Normal')
+			assert.strictEqual(exif.Saturation, 'Normal')
+			assert.strictEqual(exif.Sharpness, 'Normal')
+			assert.deepEqual(exif.LensSpecification, [ 35, 35, 2, 2 ])
 		})
 
 	})
