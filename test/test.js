@@ -213,6 +213,7 @@ describe('parser (exif data)', () => {
 			'DJI_Zenmuse_XT2_640_R_13mm.tiff',
 			'FLIR_DUO_PRO_640_R_13mm.JPG',
 			'FLIR_DUO_PRO_640_R_13mm.TIFF',
+			'FLIR_DUO_PRO_640_R_19mm.JPG',
 			'MicaSense_RedEdge_M.tif',
 			'MicaSense_Altum_TRM.tif',
 			'MicaSense_Altum_MSP.tif',
@@ -578,7 +579,7 @@ describe('parser (exif data)', () => {
 
 	describe('cameras', () => {
 
-		const options = { xmp: true, flir: true }
+		const options = { xmp: true, flir: true, sof: true }
 
 		it('DJI Zenmuse X3', async () => {
 			const exif = await parse(buffers['DJI_Zenmuse_X3.JPG'], options)
@@ -949,6 +950,76 @@ describe('parser (exif data)', () => {
 			})
 
 		})
+
+		describe('FLIR DUO PRO 640 R 19mm', () => {
+
+			it('RGB', async () => {
+				const exif = await parse(buffers['FLIR_DUO_PRO_640_R_19mm.JPG'], options)
+				console.log(exif);
+				assert.exists(exif, `exif doesn't exist`)
+				assert.strictEqual(exif.Make, 'FLIR')
+				assert.strictEqual(exif.Model, 'Duo Pro R')
+				assert.strictEqual(exif.XResolution, 1)
+				assert.strictEqual(exif.YResolution, 1)
+				assert.strictEqual(exif.ResolutionUnit, 2)
+				assert.strictEqual(exif.Software, 'V01.02.05')
+				assert.strictEqual(exif.YCbCrPositioning, 1)
+				assert.strictEqual(exif.FNumber, 1.8)
+				assert.strictEqual(exif.FocalLength, 8)
+				assert.strictEqual(exif.FocalPlaneXResolution, 10.88)
+				assert.strictEqual(exif.FocalPlaneYResolution, 8.704)
+				assert.strictEqual(exif.FocalPlaneResolutionUnit, 4)
+				assert.strictEqual(exif.ExifVersion, '0210')
+				assert.strictEqual(exif.ComponentsConfiguration, 'Y, Cb, Cr, -')
+				assert.deepEqual(exif.SubjectArea, [ 2000, 1500, 4000, 3000 ])
+				assert.strictEqual(exif.FlashpixVersion, '0100')
+				assert.strictEqual(exif.ColorSpace, 1)
+				assert.strictEqual(exif.PixelXDimension, 4000)
+				assert.strictEqual(exif.PixelYDimension, 3000)
+				assert.strictEqual(exif.GPSVersionID, '3.2.0.0')
+				assert.strictEqual(exif.GPSLatitudeRef, 'S')
+				assert.deepEqual(exif.GPSLatitude, [ 0, 0, 0 ])
+				assert.strictEqual(exif.GPSLongitudeRef, 'W')
+				assert.deepEqual(exif.GPSLongitude, [ 0, 0, 0 ])
+				assert.strictEqual(exif.GPSAltitudeRef, 0)
+				assert.strictEqual(exif.GPSAltitude, 0)
+				assert.strictEqual(exif.GPSTimeStamp, '12:1:23')
+				assert.strictEqual(exif.GPSSpeedRef, 'K')
+				assert.strictEqual(exif.GPSSpeed, 0)
+				assert.strictEqual(exif.GPSTrackRef, 'T')
+				assert.strictEqual(exif.GPSTrack, 0)
+				assert.strictEqual(exif.latitude, 0)
+				assert.strictEqual(exif.longitude, 0)
+
+				// XMP
+				assert.exists(exif.xmp)
+				assert.strictEqual(exif.xmp['rdf:about'], '')
+				assert.deepEqual(exif.xmp['Camera:BandName'], [
+					{ value: 'LWIR', attributes: {}, description: 'LWIR' },
+				])
+				assert.strictEqual(exif.xmp['Camera:Yaw'], '16319/100')
+				assert.strictEqual(exif.xmp['Camera:Pitch'], '-8759/100')
+				assert.strictEqual(exif.xmp['Camera:Roll'], '-9509/100')
+				assert.strictEqual(exif.xmp['Camera:GPSXYAccuracy'], 4294967.5)
+				assert.strictEqual(exif.xmp['Camera:GPSZAccuracy'], 3750005.75)
+				assert.strictEqual(exif.xmp['Camera:GyroRate'], 0)
+				assert.strictEqual(exif.xmp['Camera:DetectorBitDepth'], 16)
+				assert.strictEqual(exif.xmp['Camera:IsNormalized'], true)
+				assert.strictEqual(exif.xmp['FLIR:MAVVersionID'], '0.3.0.0')
+				assert.strictEqual(exif.xmp['FLIR:MAVComponentID'], 100)
+				assert.strictEqual(exif.xmp['FLIR:MAVRelativeAltitude'], '0/1000')
+				assert.strictEqual(exif.xmp['FLIR:MAVRateOfClimbRef'], 'M')
+				assert.strictEqual(exif.xmp['FLIR:MAVRateOfClimb'], '0/1000')
+				assert.strictEqual(exif.xmp['FLIR:MAVYaw'], '0/100')
+				assert.strictEqual(exif.xmp['FLIR:MAVPitch'], '0/100')
+				assert.strictEqual(exif.xmp['FLIR:MAVRoll'], '0/100')
+				assert.strictEqual(exif.xmp['FLIR:MAVYawRate'], '0/100')
+				assert.strictEqual(exif.xmp['FLIR:MAVPitchRate'], '0/100')
+				assert.strictEqual(exif.xmp['FLIR:MAVRollRate'], '0/100' )
+			})
+
+		})
+
 
 		it('MicaSense RedEdge M', async () => {
 			const exif = await parse(buffers['MicaSense_RedEdge_M.tif'], options)

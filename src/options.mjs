@@ -41,6 +41,9 @@ export const defaultOptions = {
 	iptc: false,
 	// APP1 - FLIR - A special FLIR FFF segment
 	flir: false,
+	// SOF0 - SOF - A special SOF FFC0 segment
+	sof: false,
+
 
 	// TIFF BLOCKS
 	// APP1 - Exif IFD.
