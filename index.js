@@ -148,7 +148,7 @@
 
 	function read(xmpString) {
 	    try {
-	        const doc = getDocument(xmpString);
+	        const doc = getDocument(xmpString.replace(/\0/g, ""));
 	        const rdf = getRDF(doc);
 
 	        const xmp = parseXMPObject(convertToObject(rdf, true));
