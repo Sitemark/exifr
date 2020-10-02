@@ -778,7 +778,7 @@
 	// or it falls back to reading the whole file if enabled with options.allowWholeFile.
 
 	class ChunkedReader {
-
+		
 		constructor(input, options) {
 			this.input = input;
 			this.options = options;
@@ -1925,14 +1925,22 @@
 		// Minimum length 10 (in practice it's bigger but that's ok)
 		let length = (buffer.length || buffer.byteLength) - 10;
 		let nMarkerByte = 0xC0 | sofN;
-		for (; offset < length; offset++) {
-			if (getUint8(buffer, offset) === 0xFF
-				&& getUint8(buffer, offset + 1) === nMarkerByte) {
-				let start = offset;
-				// LF
-				let size = getUint16(buffer, offset + 2);
-				let end = start + size;
-				return {start, size, end}
+		while(offset < length) {
+			// every segment should start with FF
+			if(getUint8(buffer, offset) !== 0xFF){
+				return undefined;
+			}
+			const segmentType = getUint8(buffer, offset + 1);
+			if(segmentType === 0xD8){
+				offset += 2;
+			} else {
+				const size = getUint16(buffer, offset + 2);
+				if(segmentType === nMarkerByte) {
+					return {start: offset, size, end:offset+size}
+				} else {
+					// jump the length of this segment to continue looking
+					offset += (size + 2);
+				}
 			}
 		}
 	}
@@ -2125,12 +2133,6 @@
 				if (output[key] === undefined)
 					delete output[key];
 			if (Object.keys(output).length === 0) return
-
-			if(this.sof){
-				console.log(output);
-				throw new Error("sof found");
-			}
-
 			return output
 		}
 

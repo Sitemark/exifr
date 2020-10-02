@@ -63,15 +63,23 @@ function findAppSegment(buffer, appN, condition, callback, offset = 0) {
 function findSOFSegment(buffer, sofN, offset = 0) {
 	// Minimum length 10 (in practice it's bigger but that's ok)
 	let length = (buffer.length || buffer.byteLength) - 10
-	let nMarkerByte = 0xC0 | sofN
-	for (; offset < length; offset++) {
-		if (getUint8(buffer, offset) === 0xFF
-			&& getUint8(buffer, offset + 1) === nMarkerByte) {
-			let start = offset
-			// LF
-			let size = getUint16(buffer, offset + 2)
-			let end = start + size
-			return {start, size, end}
+	let nMarkerByte = 0xC0 | sofN;
+	while(offset < length) {
+		// every segment should start with FF
+		if(getUint8(buffer, offset) !== 0xFF){
+			return undefined;
+		}
+		const segmentType = getUint8(buffer, offset + 1);
+		if(segmentType === 0xD8){
+			offset += 2;
+		} else {
+			const size = getUint16(buffer, offset + 2);
+			if(segmentType === nMarkerByte) {
+				return {start: offset, size, end:offset+size}
+			} else {
+				// jump the length of this segment to continue looking
+				offset += (size + 2)
+			}
 		}
 	}
 }
@@ -108,7 +116,7 @@ function findFlirFFF(buffer) {
 }
 
 function findSOF(buffer) {
-	return findSOFSegment(buffer, 0, () => true);
+	return findSOFSegment(buffer, 0, 0);
 }
 
 function isFlirFFFSegment(buffer, offset) {
@@ -542,8 +550,8 @@ export class ExifParser extends Reader {
 		if (!this.ensureSegmentPosition('sof', findSOF)) return
 
 		let sof = {}
-		sof.ImageHeight = getUint32(this.buffer, this.sofOffset + 5)
-		sof.ImageWidth = getUint32(this.buffer, this.sofOffset + 7)
+		sof.ImageHeight = getUint16(this.buffer, this.sofOffset + 5)
+		sof.ImageWidth = getUint16(this.buffer, this.sofOffset + 7)
 
 		this.sof = sof
 	}
