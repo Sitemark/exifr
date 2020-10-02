@@ -663,6 +663,10 @@ describe('parser (exif data)', () => {
 			assert.strictEqual(exif.xmp['crs:HasSettings'], false)
 			assert.strictEqual(exif.xmp['crs:HasCrop'], false)
 			assert.strictEqual(exif.xmp['crs:AlreadyApplied'], false)
+
+			// SOF
+			assert.strictEqual(exif.sof.ImageHeight, 2250)
+			assert.strictEqual(exif.sof.ImageWidth, 4000)
 		})
 
 
@@ -729,6 +733,10 @@ describe('parser (exif data)', () => {
 				assert.strictEqual(exif.xmp['drone-dji:CamReverse'], false)
 				assert.strictEqual(exif.xmp['drone-dji:GimbalReverse'], false)
 				assert.strictEqual(exif.xmp['drone-dji:RtkFlag'], false)
+
+				// SOF
+				assert.strictEqual(exif.sof.ImageHeight, 3000)
+				assert.strictEqual(exif.sof.ImageWidth, 4000)
 			})
 
 			it('TRM', async () => {
@@ -864,6 +872,10 @@ describe('parser (exif data)', () => {
 				assert.strictEqual(exif.xmp['FLIR:MAVYawRate'], '0/100')
 				assert.strictEqual(exif.xmp['FLIR:MAVPitchRate'], '0/100')
 				assert.strictEqual(exif.xmp['FLIR:MAVRollRate'], '0/100' )
+
+				// SOF
+				assert.strictEqual(exif.sof.ImageHeight, 3000)
+				assert.strictEqual(exif.sof.ImageWidth, 4000)
 			})
 
 			it('TRM', async () => {
@@ -1539,6 +1551,10 @@ describe('parser (exif data)', () => {
 				{ value: 2.200000, attributes: {}, description: '2.200000' },
 				{ value: 2.200000, attributes: {}, description: '2.200000' }
 			])
+
+			// SOF
+			assert.strictEqual(exif.sof.ImageHeight, 4228)
+			assert.strictEqual(exif.sof.ImageWidth, 5048)
 		})
 
 		it('FLIR Tau 2 640 R 19mm', async () => {
@@ -1613,6 +1629,10 @@ describe('parser (exif data)', () => {
 			assert.strictEqual(exif.flir.FocusDistance, 0)
 			assert.strictEqual(exif.flir.PaletteName, 'Rainbow')
 			assert.strictEqual(exif.flir.GPSMapDatum, 'WGS-84')
+
+			// SOF
+			assert.strictEqual(exif.sof.ImageHeight, 512)
+			assert.strictEqual(exif.sof.ImageWidth, 640)
 		})
 
 		it('Sensefly Thermomap 9mm', async () => {
@@ -1718,6 +1738,10 @@ describe('parser (exif data)', () => {
 			assert.strictEqual(exif.xmp['Platform:Model'], 'eBee X')
 			assert.strictEqual(exif.xmp['Platform:SerialNumber'], 'IX-x1-00057')
 			assert.strictEqual(exif.xmp['Platform:SwVersion'], '3.X.Xnb 3254' )
+
+			// SOF
+			assert.strictEqual(exif.sof.ImageHeight, 3648)
+			assert.strictEqual(exif.sof.ImageWidth, 5472)
 		})
 
 		it('Wiris 2nd Gen 640 19mm', async () => {
@@ -1849,10 +1873,15 @@ describe('parser (exif data)', () => {
 			assert.strictEqual(exif.xmp['crs:HasSettings'], false)
 			assert.strictEqual(exif.xmp['crs:HasCrop'], false)
 			assert.strictEqual(exif.xmp['crs:AlreadyApplied'], false)
+
+			// SOF
+			assert.strictEqual(exif.sof.ImageHeight, 3040)
+			assert.strictEqual(exif.sof.ImageWidth, 4056)
 		})
 
 		it('WingtraOne Sony DSC-RX1RII', async () => {
 			const exif = await parse(buffers['WingtraOne_Sony_DSC_RX1RII.JPG'], options)
+			console.log(exif);
 			assert.exists(exif, `exif doesn't exist`)
 			assert.strictEqual(exif.ImageDescription, '                               ')
 			assert.strictEqual(exif.Make, 'SONY')
@@ -1902,6 +1931,10 @@ describe('parser (exif data)', () => {
 			assert.strictEqual(exif.Saturation, 'Normal')
 			assert.strictEqual(exif.Sharpness, 'Normal')
 			assert.deepEqual(exif.LensSpecification, [ 35, 35, 2, 2 ])
+
+			// SOF
+			assert.strictEqual(exif.sof.ImageHeight, 5304)
+			assert.strictEqual(exif.sof.ImageWidth, 7952)
 		})
 
 	})
