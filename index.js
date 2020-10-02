@@ -1921,6 +1921,7 @@
 	}
 
 	// https://www.w3.org/Graphics/JPEG/itu-t81.pdf p.35
+	// based on https://web.archive.org/web/20131016210645/http://www.64lines.com/jpeg-width-height
 	function findSOFSegment(buffer, sofN, offset = 0) {
 		// Minimum length 10 (in practice it's bigger but that's ok)
 		let length = (buffer.length || buffer.byteLength) - 10;
@@ -1931,9 +1932,11 @@
 				return undefined;
 			}
 			const segmentType = getUint8(buffer, offset + 1);
+			// the very start of the image - no length defined, go to the first segment
 			if(segmentType === 0xD8){
 				offset += 2;
 			} else {
+				// The size of a segment is always given at offset + 2 position.
 				const size = getUint16(buffer, offset + 2);
 				if(segmentType === nMarkerByte) {
 					return {start: offset, size, end:offset+size}
