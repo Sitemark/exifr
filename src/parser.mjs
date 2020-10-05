@@ -31,7 +31,7 @@ const SIZE_LOOKUP = {
 }
 
 // TODO: disable/enable tags dictionary
-// TODO: public tags dictionary. user can define what he needs and uses 
+// TODO: public tags dictionary. user can define what he needs and uses
 
 const THUMB_OFFSET = 'ThumbnailOffset'
 const THUMB_LENGTH = 'ThumbnailLength'
@@ -59,6 +59,35 @@ function findAppSegment(buffer, appN, condition, callback, offset = 0) {
 	}
 }
 
+// https://www.w3.org/Graphics/JPEG/itu-t81.pdf p.35
+// based on https://web.archive.org/web/20131016210645/http://www.64lines.com/jpeg-width-height
+function findSOFSegment(buffer, sofN, offset = 0) {
+	// Minimum length 10 (in practice it's bigger but that's ok)
+	let length = (buffer.length || buffer.byteLength) - 10
+	let nMarkerByte = 0xC0 | sofN;
+	while(offset < length) {
+		// every segment should start with FF
+		if(getUint8(buffer, offset) !== 0xFF){
+			return undefined;
+		}
+		const segmentType = getUint8(buffer, offset + 1);
+		// the very start of the image - no length defined, go to the first segment
+		if(segmentType === 0xD8){
+			offset += 2;
+		} else {
+			// The size of a segment is always given at offset + 2 position.
+			const size = getUint16(buffer, offset + 2);
+			if(segmentType === nMarkerByte) {
+				return {start: offset, size, end:offset+size}
+			} else {
+				// jump the length of this segment to continue looking
+				offset += (size + 2)
+			}
+		}
+	}
+}
+
+
 
 
 export function findTiff(buffer) {
@@ -68,6 +97,8 @@ export function findTiff(buffer) {
 	// otherwise find the segment header.
 	return findAppSegment(buffer, 1, isExifSegment, getExifSize)
 }
+
+
 
 function isExifSegment(buffer, offset) {
 	return getUint32(buffer, offset + 4) === 0x45786966 // 'Exif'
@@ -85,6 +116,10 @@ function getExifSize(buffer, offset) {
 
 function findFlirFFF(buffer) {
 	return findAppSegment(buffer, 1, isFlirFFFSegment, getFlirFFFSize);
+}
+
+function findSOF(buffer) {
+	return findSOFSegment(buffer, 0, 0);
 }
 
 function isFlirFFFSegment(buffer, offset) {
@@ -222,6 +257,7 @@ export class ExifParser extends Reader {
 		if (this.options.icc)  this.parseIccSegment()  // Image profile
 		if (this.options.iptc) this.parseIptcSegment() // Captions and copyrights
 		if (this.options.flir) this.parseFlirFFFSegment() // Additional data included by FLIR cameras
+		if (this.options.sof) this.parseSofSegment() // Additional data included by FLIR cameras
 
 		// close FS file handle just in case it's still open
 		if (this.reader) this.reader.destroy()
@@ -233,6 +269,7 @@ export class ExifParser extends Reader {
 			var output = {image, exif, gps, interop, thumbnail, iptc}
 		if (this.xmp) output.xmp = this.xmp
 		if (this.flir) output.flir = this.flir
+		if (this.sof) output.sof = this.sof
 		// Return undefined rather than empty object if there's no data.
 		for (let key in output)
 			if (output[key] === undefined)
@@ -247,7 +284,7 @@ export class ExifParser extends Reader {
 		if (this.tiffPosition === undefined) return
 		if (!this.tiffParsed) await this.parseTiff()
 		if (!this.thumbnailParsed) await this.parseThumbnailBlock(true)
-		if (this.thumbnail === undefined) return 
+		if (this.thumbnail === undefined) return
 		// TODO: replace 'ThumbnailOffset' & 'ThumbnailLength' by raw keys (when tag dict is not included)
 		let offset = this.thumbnail[THUMB_OFFSET] + this.tiffOffset
 		let length = this.thumbnail[THUMB_LENGTH]
@@ -501,6 +538,25 @@ export class ExifParser extends Reader {
 
 		this.parseFlirFFFDirectory(flir, le)
 		this.flir = flir
+	}
+
+
+	// SOF file header (ref 3)
+	// 0x00 - 00 - Header start "FFC0"
+	// 0x02 - 02 - int16u LF: (frame header length)
+	// 0x04 - 04 - int8u  P: sample precision
+	// 0x05 - 05 - int16u Y: height
+	// 0x07 - 07 - int16u X: width
+	// 0x09 - 09 - int8u Nf: Number of image components in frame
+	parseSofSegment() {
+		// Cancel if the file doesn't contain the segment or if it's damaged.
+		if (!this.ensureSegmentPosition('sof', findSOF)) return
+
+		let sof = {}
+		sof.ImageHeight = getUint16(this.buffer, this.sofOffset + 5)
+		sof.ImageWidth = getUint16(this.buffer, this.sofOffset + 7)
+
+		this.sof = sof
 	}
 
 	parseFlirFFFDirectory(flir, le) {
