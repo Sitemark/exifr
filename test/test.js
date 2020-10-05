@@ -1881,7 +1881,6 @@ describe('parser (exif data)', () => {
 
 		it('WingtraOne Sony DSC-RX1RII', async () => {
 			const exif = await parse(buffers['WingtraOne_Sony_DSC_RX1RII.JPG'], options)
-			console.log(exif);
 			assert.exists(exif, `exif doesn't exist`)
 			assert.strictEqual(exif.ImageDescription, '                               ')
 			assert.strictEqual(exif.Make, 'SONY')
