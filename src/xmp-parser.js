@@ -13,7 +13,6 @@ const tagTypes = {
     // DJI
     'drone-dji:CamReverse': 'bool',
     'drone-dji:GimbalReverse': 'bool',
-    'drone-dji:RtkFlag': 'bool',
 
     // CRS
     'crs:Version': 'string',
