@@ -224,6 +224,7 @@ describe('parser (exif data)', () => {
 			'Wiris_2nd_Gen_640_19mm.tiff',
 			'WingtraOne_Sony_DSC_RX1RII.JPG',
 			"DJI_ZH20T.JPG",
+			"Phantom 4 RTK.jpg",
 		]
 		for (let name of images) {
 			if (isNode)
@@ -732,7 +733,7 @@ describe('parser (exif data)', () => {
 				assert.strictEqual(exif.xmp['drone-dji:FlightPitchDegree'], -2.4)
 				assert.strictEqual(exif.xmp['drone-dji:CamReverse'], false)
 				assert.strictEqual(exif.xmp['drone-dji:GimbalReverse'], false)
-				assert.strictEqual(exif.xmp['drone-dji:RtkFlag'], false)
+				assert.strictEqual(exif.xmp['drone-dji:RtkFlag'], 0)
 
 				// SOF
 				assert.strictEqual(exif.sof.ImageHeight, 3000)
@@ -793,7 +794,7 @@ describe('parser (exif data)', () => {
 				assert.strictEqual(exif.xmp['drone-dji:FlightPitchDegree'], -2.4)
 				assert.strictEqual(exif.xmp['drone-dji:CamReverse'], false)
 				assert.strictEqual(exif.xmp['drone-dji:GimbalReverse'], false)
-				assert.strictEqual(exif.xmp['drone-dji:RtkFlag'], false)
+				assert.strictEqual(exif.xmp['drone-dji:RtkFlag'], 0)
 				assert.strictEqual(exif.xmp['FLIR:TlinearGain'], 0.04)
 				assert.deepEqual(exif.xmp['FLIR:BandName'], [
 					{ value: 'LWIR', attributes: {}, description: 'LWIR' }
@@ -1877,6 +1878,71 @@ describe('parser (exif data)', () => {
 			// SOF
 			assert.strictEqual(exif.sof.ImageHeight, 3040)
 			assert.strictEqual(exif.sof.ImageWidth, 4056)
+		})
+
+		it('Phantom 4 RTK', async () => {
+			const exif = await parse(buffers['Phantom 4 RTK.jpg'], options)
+			assert.exists(exif, `exif doesn't exist`)
+			assert.strictEqual(exif.ImageDescription, 'DCIM\\100MEDIA\\DJI_0343.JPG')
+			assert.strictEqual(exif.Make, 'DJI')
+			assert.strictEqual(exif.Model, 'FC6310')
+			assert.strictEqual(exif.PixelXDimension, 5472)
+			assert.strictEqual(exif.PixelYDimension, 3648)
+			assert.strictEqual(exif.Orientation, 1)
+			assert.strictEqual(exif.XResolution, 72)
+			assert.strictEqual(exif.YResolution, 72)
+			assert.strictEqual(exif.ResolutionUnit, 2)
+			assert.strictEqual(exif.Software, 'v01.07.1641')
+			assert.strictEqual(exif.ModifyDate, '2019-09-13T10:49:41')
+			assert.strictEqual(exif.YCbCrPositioning, 1)
+			assert.strictEqual(exif.ExposureTime, 0.002)
+			assert.strictEqual(exif.FNumber, 5.6)
+			assert.strictEqual(exif.ExposureProgram, 'Normal program')
+			assert.strictEqual(exif.ISO, 800)
+			assert.strictEqual(exif.ExifVersion, '0230')
+			assert.strictEqual(exif.DateTimeOriginal, '2019-09-13T10:49:40')
+			assert.strictEqual(exif.DateTimeDigitized, '2019-09-13T10:49:40')
+			assert.strictEqual(exif.ComponentsConfiguration, '-, Cr, Cb, Y')
+			assert.strictEqual(exif.ShutterSpeedValue, 8.965)
+			assert.strictEqual(exif.ApertureValue, 4.97)
+			assert.strictEqual(exif.ExposureBiasValue, 0)
+			assert.strictEqual(exif.MaxApertureValue, 2.97)
+			assert.strictEqual(exif.MeteringMode, 'Average')
+			assert.strictEqual(exif.LightSource, 'Daylight')
+			assert.strictEqual(exif.Flash, 'No flash function')
+			assert.strictEqual(exif.FocalLength, 8.8)
+			assert.isUndefined(exif.SubjectArea)
+			assert.strictEqual(exif.FlashpixVersion, '0010')
+			assert.strictEqual(exif.ColorSpace, 1)
+			assert.strictEqual(exif.SceneType, 'Directly photographed')
+			assert.strictEqual(exif.GPSVersionID, '2.3.0.0')
+			assert.strictEqual(exif.GPSLatitudeRef, 'N')
+			assert.deepEqual(exif.GPSLatitude, [ 50, 55, 42.0271 ])
+			assert.strictEqual(exif.GPSLongitudeRef, 'E')
+			assert.deepEqual(exif.GPSLongitude, [ 4, 45, 12.7276 ])
+			assert.strictEqual(exif.GPSAltitudeRef, 1)
+			assert.strictEqual(exif.GPSAltitude, 128.486)
+			assert.strictEqual(exif.latitude, 50.92834086111111)
+			assert.strictEqual(exif.longitude, 4.753535444444444)
+
+			// XMP
+			assert.exists(exif.xmp)
+			assert.strictEqual(exif.xmp['rdf:about'], 'DJI Meta Data')
+			assert.strictEqual(exif.xmp['drone-dji:AbsoluteAltitude'], -128.49)
+			assert.strictEqual(exif.xmp['drone-dji:RelativeAltitude'], 36.7)
+			assert.strictEqual(exif.xmp['drone-dji:GimbalRollDegree'], 0)
+			assert.strictEqual(exif.xmp['drone-dji:GimbalYawDegree'], -68.9)
+			assert.strictEqual(exif.xmp['drone-dji:GimbalPitchDegree'], -90)
+			assert.strictEqual(exif.xmp['drone-dji:FlightRollDegree'], -1.5)
+			assert.strictEqual(exif.xmp['drone-dji:FlightYawDegree'], -69.3)
+			assert.strictEqual(exif.xmp['drone-dji:FlightPitchDegree'], -0.3)
+			assert.strictEqual(exif.xmp['drone-dji:CamReverse'], false)
+			assert.strictEqual(exif.xmp['drone-dji:GimbalReverse'], false)
+			assert.strictEqual(exif.xmp['drone-dji:RtkFlag'], 50)
+
+			// SOF
+			assert.strictEqual(exif.sof.ImageWidth, 5472)
+			assert.strictEqual(exif.sof.ImageHeight, 3648)
 		})
 
 		it('WingtraOne Sony DSC-RX1RII', async () => {
