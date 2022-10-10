@@ -1,16 +1,10 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('text-encoding'), require('fs')) :
-	typeof define === 'function' && define.amd ? define('exifr', ['exports', 'text-encoding', 'fs'], factory) :
-	(global = global || self, factory(global.exifr = {}, global['text-encoding'], global.fs));
-}(this, function (exports, TextEncodingPolyfill, _fs) { 'use strict';
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('fs')) :
+	typeof define === 'function' && define.amd ? define('exifr', ['exports', 'fs'], factory) :
+	(global = global || self, factory(global.exifr = {}, global.fs));
+}(this, function (exports, _fs) { 'use strict';
 
-	TextEncodingPolyfill = TextEncodingPolyfill && TextEncodingPolyfill.hasOwnProperty('default') ? TextEncodingPolyfill['default'] : TextEncodingPolyfill;
 	_fs = _fs && _fs.hasOwnProperty('default') ? _fs['default'] : _fs;
-
-	// Polyfill for Edge
-	if (typeof window !== 'undefined' && !window.TextDecoder) {
-		window.TextDecoder = TextEncodingPolyfill.TextDecoder;
-	}
 
 	var hasBuffer = typeof Buffer !== 'undefined';
 	var isBrowser = typeof navigator !== 'undefined';
