@@ -656,6 +656,26 @@
 		return options
 	}
 
+	let _fs = undefined; // lazy-loaded
+
+	/**
+	 * A safe way of accessing the Node.js fs module. This shouldn't be used in code run by the browser.
+	 */
+	function fs() {
+	    if (!isNode) {
+	        throw new Error('Node.js fs module is not available outside of node.');
+	    }
+	    if (!_fs) {
+	        // Doing it with eval() avoids web bundlers from replacing it with a generic import and bundling the module.
+	        const fs = eval('require')('fs');
+	        _fs = fs != null ? fs.promises : undefined;
+	    }
+	    if (!_fs) {
+	        throw new Error('Node.js fs module is not available.');
+	    }
+	    return _fs;
+	}
+
 	// TODO: - minified UMD bundle
 	// TODO: - offer two UMD bundles (with tags.mjs dictionary and without)
 	// TODO: - API for including 3rd party XML parser
@@ -809,19 +829,8 @@
 
 
 	class FsReader extends ChunkedReader {
-		fs() {
-			//  FsReader should only be used in Node environments anyway, but we add this here as a sanity check
-			if (isNode) {
-				// This CommonJs require only runs in node, so it won't cause any issues in the browser
-				// Doing it this way to avoid bundling fs module in the browser build
-				const _fs = eval('require')('fs');
-				return typeof _fs !== 'undefined' ? _fs.promises : undefined;
-			}
-			throw new Error('Node.js fs module is not available outside of node.');
-		}
-
 		async readWhole() {
-			let buffer = await this.fs().readFile(this.input);
+			let buffer = await fs().readFile(this.input);
 			let tiffPosition = findTiff(buffer);
 			return [buffer, tiffPosition]
 		}
@@ -833,7 +842,7 @@
 		}
 
 		async readChunked() {
-			this.fh = await this.fs().open(this.input, 'r');
+			this.fh = await fs().open(this.input, 'r');
 			try {
 				var seekChunk = Buffer.allocUnsafe(this.options.seekChunkSize);
 				var {bytesRead} = await this.fh.read(seekChunk, 0, seekChunk.length, null);
