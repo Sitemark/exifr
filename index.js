@@ -812,7 +812,9 @@
 		fs() {
 			//  FsReader should only be used in Node environments anyway, but we add this here as a sanity check
 			if (isNode) {
-				const _fs = eval('require')('fs'); // This CommonJs require only runs in node, so it won't cause any issues in the browser
+				// This CommonJs require only runs in node, so it won't cause any issues in the browser
+				// Doing it this way to avoid bundling fs module in the browser build
+				const _fs = eval('require')('fs');
 				return typeof _fs !== 'undefined' ? _fs.promises : undefined;
 			}
 			throw new Error('Node.js fs module is not available outside of node.');
