@@ -1,10 +1,8 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('fs')) :
-	typeof define === 'function' && define.amd ? define('exifr', ['exports', 'fs'], factory) :
-	(global = global || self, factory(global.exifr = {}, global.fs));
-}(this, function (exports, _fs) { 'use strict';
-
-	_fs = _fs && _fs.hasOwnProperty('default') ? _fs['default'] : _fs;
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+	typeof define === 'function' && define.amd ? define('exifr', ['exports'], factory) :
+	(global = global || self, factory(global.exifr = {}));
+}(this, function (exports) { 'use strict';
 
 	var hasBuffer = typeof Buffer !== 'undefined';
 	var isBrowser = typeof navigator !== 'undefined';
@@ -658,8 +656,25 @@
 		return options
 	}
 
-	var fs = typeof _fs !== 'undefined' ? _fs.promises : undefined;
+	let _fs = undefined; // lazy-loaded
 
+	/**
+	 * A safe way of accessing the Node.js fs module. This shouldn't be used in code run by the browser.
+	 */
+	function fs() {
+	    if (!isNode) {
+	        throw new Error('Node.js fs module is not available outside of node.');
+	    }
+	    if (!_fs) {
+	        // Doing it with eval() avoids web bundlers from replacing it with a generic import and bundling the module.
+	        const fs = eval('require')('fs');
+	        _fs = fs != null ? fs.promises : undefined;
+	    }
+	    if (!_fs) {
+	        throw new Error('Node.js fs module is not available.');
+	    }
+	    return _fs;
+	}
 
 	// TODO: - minified UMD bundle
 	// TODO: - offer two UMD bundles (with tags.mjs dictionary and without)
@@ -771,7 +786,7 @@
 	// or it falls back to reading the whole file if enabled with options.allowWholeFile.
 
 	class ChunkedReader {
-		
+
 		constructor(input, options) {
 			this.input = input;
 			this.options = options;
@@ -814,9 +829,8 @@
 
 
 	class FsReader extends ChunkedReader {
-
 		async readWhole() {
-			let buffer = await fs.readFile(this.input);
+			let buffer = await fs().readFile(this.input);
 			let tiffPosition = findTiff(buffer);
 			return [buffer, tiffPosition]
 		}
@@ -828,7 +842,7 @@
 		}
 
 		async readChunked() {
-			this.fh = await fs.open(this.input, 'r');
+			this.fh = await fs().open(this.input, 'r');
 			try {
 				var seekChunk = Buffer.allocUnsafe(this.options.seekChunkSize);
 				var {bytesRead} = await this.fh.read(seekChunk, 0, seekChunk.length, null);

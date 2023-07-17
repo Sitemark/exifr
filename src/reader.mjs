@@ -1,11 +1,7 @@
 import {findTiff} from './parser.mjs'
 import {hasBuffer, isBrowser, isNode} from './buff-util.mjs'
 import {processOptions} from './options.mjs'
-// Sigh... Ugly, ugly, ugly. FS Promises are experimental plus this code needs to be isomorphic
-// and work without fs altogether.
-import _fs from 'fs'
-var fs = typeof _fs !== 'undefined' ? _fs.promises : undefined
-
+import {fs} from './fs.mjs'
 
 // TODO: - minified UMD bundle
 // TODO: - offer two UMD bundles (with tags.mjs dictionary and without)
@@ -117,7 +113,7 @@ export default class Reader {
 // or it falls back to reading the whole file if enabled with options.allowWholeFile.
 
 class ChunkedReader {
-	
+
 	constructor(input, options) {
 		this.input = input
 		this.options = options
@@ -160,9 +156,8 @@ class ChunkedReader {
 
 
 class FsReader extends ChunkedReader {
-
 	async readWhole() {
-		let buffer = await fs.readFile(this.input)
+		let buffer = await fs().readFile(this.input)
 		let tiffPosition = findTiff(buffer)
 		return [buffer, tiffPosition]
 	}
@@ -174,7 +169,7 @@ class FsReader extends ChunkedReader {
 	}
 
 	async readChunked() {
-		this.fh = await fs.open(this.input, 'r')
+		this.fh = await fs().open(this.input, 'r')
 		try {
 			var seekChunk = Buffer.allocUnsafe(this.options.seekChunkSize)
 			var {bytesRead} = await this.fh.read(seekChunk, 0, seekChunk.length, null)
