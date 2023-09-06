@@ -19,6 +19,11 @@
     "buffer",
     "uint8array"
   ],
+  "files": [
+    "src/",
+    "index.js",
+    "index.mjs"
+  ],
   "homepage": "https://exifr.netlify.com",
   "bugs": "https://github.com/MikeKovarik/exifr/issues",
   "repository": {
