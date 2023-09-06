@@ -1,4 +1,4 @@
-import XMPParser from "./xmp-parser";
+import XMPParser from "./xmp-parser.mjs";
 
 export const defaultOptions = {
 
