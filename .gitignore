@@ -153,6 +153,4 @@ typings/
 
 package-lock.json
 
-# We include the build because we're not an npm package
-index.js
-
+dist/

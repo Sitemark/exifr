@@ -4,6 +4,12 @@
   "description": "📑 The fastest and most versatile JavaScript EXIF reading library.",
   "author": "Mike Kovarik",
   "license": "MIT",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.mjs",
+  "files": [
+    "dist",
+    "!src"
+  ],
   "keywords": [
     "exif",
     "tiff",
@@ -26,17 +32,18 @@
     "url": "https://github.com/MikeKovarik/exifr.git"
   },
   "scripts": {
-    "test": "mocha test/test.js",
-    "build": "rollup -c rollup.config.prod.js",
-    "dev": "rollup -c rollup.config.dev.js -w"
-  },
-  "dependencies": {
-    "xmldom": "^0.1.27"
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "pretest": "yarn build",
+    "test": "mocha test/test.js"
   },
   "devDependencies": {
+    "xmldom": "^0.1.27",
     "chai": "^4.2.0",
     "mocha": "^6.1.4",
-    "rollup": "^1.10.0",
-    "rollup-plugin-notify": "^1.0.1"
+    "rollup": "^3.0.0"
+  },
+  "peerDependencies": {
+    "xmldom": "^0.1.27"
   }
 }

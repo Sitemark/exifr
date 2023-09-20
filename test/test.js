@@ -8,7 +8,7 @@ if (isBrowser) {
 	var chai = require('chai')
 	var path = require('path')
 	var fs = require('fs').promises
-	var exifr = require('../index.js')
+	var exifr = require('../dist/cjs/index.js')
 }
 var {ExifParser, parse, thumbnailBuffer, thumbnailUrl} = exifr
 var assert = chai.assert
