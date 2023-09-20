@@ -4,10 +4,18 @@ Fork from: https://github.com/MikeKovarik/exifr/commit/bf9fc270b00a87347fd691f7a
 
 ## Installation
 
-TODO: fill in with example
+Add a dependency to package.json and rerun your package manager.
 ```
-npm install exifr
+{
+  "dependency": {
+    "@sitemark/exifr": "https://github.com/sitemark/exifr/releases/download/vx.x.x/sitemark-exifr.tgz"
+  }
+}
 ```
+
+To update, just change the path and rerun your package manager.
+
+To test locally, you should use `yarn link`, `pnpm link` or `npm link`.
 
 ## Features
 
