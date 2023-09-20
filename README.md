@@ -1,25 +1,12 @@
-# exifr
+# @sitemark/exifr
 
-[![Build Status](https://travis-ci.org/MikeKovarik/exifr.svg)](https://travis-ci.org/MikeKovarik/exifr)
-[![NPM Version](https://img.shields.io/npm/v/exifr.svg?style=flat)](https://npmjs.org/package/exifr)
-[![License](http://img.shields.io/npm/l/exifr.svg?style=flat)](LICENSE)
-[![Dependency Status](https://david-dm.org/MikeKovarik/exifr.svg)](https://david-dm.org/MikeKovarik/exifr)
-[![devDependency Status](https://david-dm.org/MikeKovarik/exifr/dev-status.svg)](https://david-dm.org/MikeKovarik/exifr#info=devDependencies)
-
-📑 The fastest and most versatile JavaScript EXIF reading library.
-
-Try it yourself - [demo page](https://exifr.netlify.com/).
+Fork from: https://github.com/MikeKovarik/exifr/commit/bf9fc270b00a87347fd691f7a7df14c3263a8328
 
 ## Installation
 
+TODO: fill in with example
 ```
 npm install exifr
-```
-
-also availabe as UMD bundle transpiled for ES5
-
-```
-https://unpkg.com/exifr
 ```
 
 ## Features
@@ -56,7 +43,7 @@ Works everywhere and accepts pretty much everything you throw at it.
 ESM in Node.js
 
 ```js
-import * as exifr from 'exifr'
+import * as exifr from '@sitemark/exifr'
 // exifr handles disk reading. Only reads a few hundred bytes.
 exifr.parse('./myimage.jpg')
   .then(exif => console.log('Camera:', exif.Make, exif.Model))

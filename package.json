@@ -1,5 +1,5 @@
 {
-  "name": "exifr",
+  "name": "@sitemark/exifr",
   "version": "2.0.0",
   "description": "📑 The fastest and most versatile JavaScript EXIF reading library.",
   "author": "Mike Kovarik",
