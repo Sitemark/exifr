@@ -1,0 +1,39 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: "yarn"
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: build
+        run: yarn run build
+
+      - name: test
+        run: yarn run test
+
+      - name: pack
+        run: yarn pack --filename=sitemark-exifr.tgz
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            sitemark-exifr.tgz
+          
+

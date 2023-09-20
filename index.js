@@ -1,7 +1,7 @@
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-	typeof define === 'function' && define.amd ? define('exifr', ['exports'], factory) :
-	(global = global || self, factory(global.exifr = {}));
+	typeof define === 'function' && define.amd ? define('@sitemark/exifr', ['exports'], factory) :
+	(global = global || self, factory(global['@sitemark/exifr'] = {}));
 }(this, function (exports) { 'use strict';
 
 	var hasBuffer = typeof Buffer !== 'undefined';
