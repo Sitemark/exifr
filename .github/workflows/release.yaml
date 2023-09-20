@@ -28,12 +28,12 @@ jobs:
         run: npm run test
 
       - name: pack
-        run: npm pack --filename=sitemark-exifr.tgz
+        run: npm pack
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            sitemark-exifr.tgz
+            *.tgz
           
 
