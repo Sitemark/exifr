@@ -5,7 +5,7 @@
   "author": "Mike Kovarik",
   "license": "MIT",
   "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.mjs",
+  "module": "dist/esm/index.js",
   "files": [
     "dist"
   ],
