@@ -1,5 +1,5 @@
 import {findTiff} from './parser.mjs'
-import {hasBuffer, isBrowser, isNode} from './buff-util.mjs'
+import {hasBuffer, isBrowser, isNode, isWebWorker} from './buff-util.mjs'
 import {processOptions} from './options.mjs'
 import {fs} from './fs.mjs'
 
@@ -18,7 +18,7 @@ export default class Reader {
 	async read(arg) {
 		if (typeof arg === 'string')
 			return this.readString(arg)
-		else if (isBrowser && arg instanceof HTMLImageElement)
+		else if (isBrowser && !isWebWorker && arg instanceof HTMLImageElement)
 			return this.readString(arg.src)
 		else if (hasBuffer && Buffer.isBuffer(arg))
 			return this.readBuffer(arg)
