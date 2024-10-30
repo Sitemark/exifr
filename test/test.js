@@ -1,20 +1,10 @@
+import { it, beforeAll, assert, describe } from "vitest";
+import { join } from 'path';
+import { readFile } from 'fs/promises';
+import { ExifParser, parse, thumbnailBuffer, thumbnailUrl } from '../dist/esm/index.js';
+
 var isBrowser = typeof navigator === 'object'
 var isNode = typeof require === 'function' && !isBrowser
-
-if (isBrowser) {
-	mocha.setup('bdd')
-	setTimeout(() => mocha.run(), 100)
-} else {
-	var chai = require('chai')
-	var path = require('path')
-	var fs = require('fs').promises
-	var exifr = require('../dist/cjs/index.js')
-}
-var {ExifParser, parse, thumbnailBuffer, thumbnailUrl} = exifr
-var assert = chai.assert
-
-
-
 
 function createImg(url) {
 	var img = document.createElement('img')
@@ -41,7 +31,7 @@ function createBlob(url) {
 
 function getPath(filepath) {
 	if (isNode)
-		return path.join(__dirname, filepath)
+		return join(__dirname, filepath)
 	else
 		return filepath
 }
@@ -69,7 +59,7 @@ async function createBase64Url(url) {
 			reader.readAsDataURL(blob)
 		})
 	} else if (isNode) {
-		var buffer = await fs.readFile(url)
+		var buffer = await readFile(url)
 		return 'data:image/jpeg;base64,' + buffer.toString('base64')
 	}
 }
@@ -78,7 +68,7 @@ async function createBase64Url(url) {
 describe('reader (input formats)', () => {
 
 	isNode && it(`Buffer`, async () => {
-		var buffer = await fs.readFile(getPath('IMG_20180725_163423.jpg'))
+		var buffer = await readFile(getPath('IMG_20180725_163423.jpg'))
 		var exif = await parse(buffer)
 		assert.exists(exif, `exif doesn't exist`)
 	})
@@ -192,7 +182,7 @@ describe('parser (exif data)', () => {
 
 	let buffers = {}
 
-	before(async () => {
+	beforeAll(async () => {
 		let images = [
 			'IMG_20180725_163423.jpg',
 			'PANO_20180725_162444.jpg',
@@ -229,7 +219,7 @@ describe('parser (exif data)', () => {
 		]
 		for (let name of images) {
 			if (isNode)
-				buffers[name] = await fs.readFile(getPath(name))
+				buffers[name] = await readFile(getPath(name))
 			else
 				buffers[name] = await fetch(getPath(name)).then(res => res.arrayBuffer())
 		}
