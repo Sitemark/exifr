@@ -12,7 +12,7 @@ function get() {
         return DOMParser;
     }
     try {
-        return eval('require')('xmldom').DOMParser; // This stops Webpack from replacing the require with a generic import and bundling the module.
+        return eval('require')('@xmldom/xmldom').DOMParser; // This stops Webpack from replacing the require with a generic import and bundling the module.
     } catch (error) {
         return undefined;
     }
