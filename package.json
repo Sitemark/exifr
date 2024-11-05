@@ -38,14 +38,14 @@
   },
   "devDependencies": {
     "@vitest/browser": "^2.1.4",
+    "@xmldom/xmldom": "^0.9.5",
     "chai": "^4.2.0",
     "mocha": "^6.1.4",
     "playwright": "^1.48.2",
     "rollup": "^3.0.0",
-    "vitest": "^2.1.4",
-    "xmldom": "^0.1.27"
+    "vitest": "^2.1.4"
   },
   "peerDependencies": {
-    "xmldom": "^0.1.27"
+    "@xmldom/xmldom": "^0.9.5"
   }
 }
