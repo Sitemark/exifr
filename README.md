@@ -4,38 +4,40 @@ Fork from: https://github.com/MikeKovarik/exifr/commit/bf9fc270b00a87347fd691f7a
 
 ## Installation
 
-Add a dependency to package.json and rerun your package manager.
+`@sitemark/exifr` is published to GitHub Packages instead of npm.
+
+To ensure that `npm` or `pnpm` uses the correct repository, add the following line to your `.npmrc` file:
+
+```ini
+@sitemark:registry=https://npm.pkg.github.com
 ```
-{
-  "dependency": {
-    "@sitemark/exifr": "https://github.com/sitemark/exifr/releases/download/vx.x.x/sitemark-exifr.tgz"
-  }
-}
-```
 
-To update, just change the path and rerun your package manager.
+This configuration will make sure that all `@sitemark` packages are installed from GitHub instead of the default npm registry.
 
-To test locally, you should use `yarn link`, `pnpm link` or `npm link`.
+---
 
-## How to release a new version
+## Releasing a New Version
 
-This is a semi-manual process, but comes down to the following.
+We use [Changesets](https://github.com/changesets/changesets) to manage versioning and changelogs. The release process is mostly automated. Here’s how it works:
 
-1. Create a PR containing bumping the version in package.json. Follow semver.
-2. After the PR has been merged, you need to manually push a new tag. This will
-   create a release on github automatically. (see .github/workflows/release.yaml). You can do
-   this using the following commands:
+1. When making changes that require a version bump, run the following command to create a changeset:
+   
+   ```sh
+   npx @changesets/cli
+   ```
 
-  ```shell
-  git checkout master
-  git tag v2.x.x # use the correct version here
-  git push origin v2.x.x # use the correct version here
-  ```
+   Follow the prompts to describe your changes and select the appropriate version bump (major, minor, or patch).
 
-If you overwrite an existing tag, a new version will not be deployed. If you
-*really* want this, you can remove the release using githubs UI and retrigger
-the release pipeline.
+2. Commit the generated changeset file:
 
+   ```sh
+   git add .changeset/
+   git commit -m "Add changeset for <description>"
+   ```
+
+3. After your PR is merged, the Changesets bot will automatically create a new PR containing the version bump and changelog updates. Review and merge this PR.
+
+4. Once the version bump PR is merged, the bot will automatically publish the new version to GitHub Packages and create a corresponding release on GitHub.
 
 ## Features
 
