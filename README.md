@@ -4,17 +4,7 @@ Fork from: https://github.com/MikeKovarik/exifr/commit/bf9fc270b00a87347fd691f7a
 
 ## Installation
 
-`@sitemark/exifr` is published to GitHub Packages instead of npm.
-
-To ensure that `npm` or `pnpm` uses the correct repository, add the following line to your `.npmrc` file:
-
-```ini
-@sitemark:registry=https://npm.pkg.github.com
-```
-
-This configuration will make sure that all `@sitemark` packages are installed from GitHub instead of the default npm registry.
-
----
+`@sitemark/exifr` is published on npm.
 
 ## Releasing a New Version
 
