@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.6
+
+### Patch Changes
+
+- a07e9a9: Publish on npm instead of github packages
+
 ## 3.1.5
 
 ### Patch Changes
