@@ -28,10 +28,7 @@
   "bugs": "https://github.com/sitemark/exifr/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sitemark/exifr.git"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "url": "git+https://github.com/sitemark/exifr.git"
   },
   "scripts": {
     "build": "rollup -c",
