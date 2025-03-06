@@ -1,5 +1,3 @@
-import pkg from "./package.json" assert { type: "json"};
-
 export default {
 		input: "src/index.mjs",
 		external: [/node_modules/],

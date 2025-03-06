@@ -2,13 +2,13 @@ name: Release
 
 on:
   push:
-    tags:
-      - "v*.*.*"
+    branches:
+      - "main"
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-  publish:
+  release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,16 +22,10 @@ jobs:
       - name: Install dependencies
         run: rm package-lock.json && npm install
 
-      - name: build
-        run: npm run build
-
-      - name: pack
-        run: npm pack
-
-      - name: Release
-        uses: softprops/action-gh-release@v1
+      - name: Create Release Pull Request or Publish to github
+        uses: changesets/action@v1
         with:
-          files: |
-            *.tgz
-          
-
+          # This also does a build
+          publish: npm run release 
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
