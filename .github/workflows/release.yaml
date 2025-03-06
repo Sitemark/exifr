@@ -12,17 +12,23 @@ jobs:
   release:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      id-token: write
+      contents: write
       packages: write
+      pull-requests: write
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v3
+      - name: Setup node
+        uses: actions/setup-node@v4
         with:
           node-version: 18.x
           cache: "npm"
           registry-url: 'https://npm.pkg.github.com'
           scope: '@sitemark'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # We first have to remove package-lock because of https://github.com/npm/cli/issues/4828...
       - name: Install dependencies
@@ -33,3 +39,5 @@ jobs:
         with:
           # This also does a build
           publish: npm run release 
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
