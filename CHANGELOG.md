@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.7
+
+### Patch Changes
+
+- fc8fa83: Update the project homepage in package.json
+
 ## 3.1.6
 
 ### Patch Changes
