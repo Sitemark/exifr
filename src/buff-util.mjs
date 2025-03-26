@@ -1,8 +1,8 @@
 export var hasBuffer = typeof Buffer !== 'undefined'
-export var isBrowser = typeof navigator !== 'undefined'
 export var isWebWorker = typeof importScripts === 'function'
 
 export var isNode = typeof global !== 'undefined' && typeof process !== 'undefined' && process.versions && process.versions.node
+export var isBrowser = typeof navigator !== 'undefined' && !isNode
 
 // Web Browser's binary data are stored in ArrayBuffer. To access it we can use
 // DataView class which has similar methods to Node's Buffer class.
