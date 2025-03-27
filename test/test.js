@@ -3,8 +3,8 @@ import { join } from 'path';
 import { readFile } from 'fs/promises';
 import { ExifParser, parse, thumbnailBuffer, thumbnailUrl } from '../dist/esm/index.js';
 
-var isBrowser = typeof navigator === 'object'
-var isNode = typeof require === 'function' && !isBrowser
+export var isNode = typeof global !== 'undefined' && typeof process !== 'undefined' && process.versions && process.versions.node
+export var isBrowser = typeof navigator !== 'undefined' && !isNode
 
 function createImg(url) {
 	var img = document.createElement('img')
