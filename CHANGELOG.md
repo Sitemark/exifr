@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.8
+
+### Patch Changes
+
+- a1662f4: Fixed isBrowser check to work properly with newer versions of node
+
 ## 3.1.7
 
 ### Patch Changes
