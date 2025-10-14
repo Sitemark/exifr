@@ -25,10 +25,10 @@
     "uint8array"
   ],
   "homepage": "https://sitemark.com",
-  "bugs": "https://github.com/sitemark/exifr/issues",
+  "bugs": "https://github.com/Sitemark/exifr/issues",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sitemark/exifr.git"
+    "url": "git+https://github.com/Sitemark/exifr.git"
   },
   "scripts": {
     "build": "rollup -c",
