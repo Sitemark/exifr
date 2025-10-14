@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.9
+
+### Patch Changes
+
+- 7894520: Use OIDC to publish package
+
 ## 3.1.8
 
 ### Patch Changes
