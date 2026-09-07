@@ -42,9 +42,6 @@
     "@vitest/browser": "^5.0.0",
     "@vitest/browser-playwright": "^5.0.0",
     "@xmldom/xmldom": "^0.9.5",
-    "chai": "^4.2.0",
-    "mocha": "^6.1.4",
-    "playwright": "^1.48.2",
     "rollup": "^3.0.0",
     "vitest": "^5.0.0"
   },
