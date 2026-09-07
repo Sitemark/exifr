@@ -384,8 +384,13 @@ export class ExifParser extends Reader {
 		let gps = this.gps = await this.parseTiffTags(this.tiffOffset + this.gpsOffset, tags.gps)
 		// Add custom timestamp property as a mixture of GPSDateStamp and GPSTimeStamp
 		if (this.options.postProcess) {
-			if (gps.GPSDateStamp && gps.GPSTimeStamp)
-				gps.timestamp = reviveDate(gps.GPSDateStamp + ' ' + gps.GPSTimeStamp)
+			if (gps.GPSDateStamp && gps.GPSTimeStamp) {
+				// Some cameras incorrectly include a time in GPSDateStamp.
+				const date = String(gps.GPSDateStamp).split(/[ T]/)[0]
+				try {
+					gps.timestamp = reviveDate(date + ' ' + gps.GPSTimeStamp)
+				} catch (_) {}
+			}
 			if (gps && gps.GPSLatitude) {
 				gps.latitude  = ConvertDMSToDD(...gps.GPSLatitude, gps.GPSLatitudeRef)
 				gps.longitude = ConvertDMSToDD(...gps.GPSLongitude, gps.GPSLongitudeRef)
@@ -743,21 +748,57 @@ function translateValue(key, val) {
 }
 
 function reviveDate(string) {
-	if (typeof string !== 'string' || string.length == 0)
-		return null
+    if (typeof string !== 'string' || string.length == 0)
+        return null
 	string = string.trim()
-	var [dateString, timeString] = string.split(' ')
-	var [year, month, day] = dateString.split(/[:\.\-]/).map(Number)
+    var date = parseExifDate(string)
+    // Invalid EXIF values must not fall through to ISO parsing.
+    if (date === INVALID_EXIF_DATE)
+        return null
+    if (date !== null)
+        return date
+    date = parseIsoDate(string)
+    if (date === null)
+        throw new Error(`Invalid EXIF date: ${string}`)
+    return date
+}
+
+const INVALID_EXIF_DATE = Symbol('invalid exif date')
+
+function parseExifDate(string) {
+	var match = /^(\d+)[:\.\-](\d+)[:\.\-](\d+)(?: (\d+):(\d+):(\d+(?:\.\d+)?))?$/.exec(string)
+	if (!match)
+		return null
+	var [year, month, day] = match.slice(1, 4).map(Number)
+	var [hours, minutes, seconds] = match.slice(4).map(value => Number(value || 0))
 	if (day > 1900) [year, day] = [day, year]
-	var date = new Date(Date.UTC(year, month - 1, day))
-	if (timeString) {
-		var [hours, minutes, seconds] = timeString.split(':').map(Number)
-		date.setUTCHours(hours)
-		date.setUTCMinutes(minutes)
-		date.setUTCSeconds(seconds)
-	}
+	if (year === 0 || month === 0 || day === 0)
+		return INVALID_EXIF_DATE
+	var date = new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds))
+	// Date normalizes invalid values, so verify that none rolled over.
+	if (
+		date.getUTCFullYear() !== year ||
+		date.getUTCMonth() !== month - 1 ||
+		date.getUTCDate() !== day ||
+		date.getUTCHours() !== hours ||
+		date.getUTCMinutes() !== minutes ||
+		date.getUTCSeconds() !== Math.trunc(seconds)
+	)
+		return INVALID_EXIF_DATE
 	const isoString = date.toISOString()
 	// Drop everything starting from the ., removing the milliseconds and the timezone
+	return isoString.substring(0, isoString.indexOf('.'))
+}
+
+function parseIsoDate(string) {
+	var match = /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})(?:\.\d+)?(?:Z|[+\-]\d{2}:?\d{2})?$/.exec(string)
+	if (!match || !Number.isFinite(new Date(string).getTime()))
+		return null
+	var timezone = /(?:Z|[+\-]\d{2}:?\d{2})$/i
+	var date = new Date(timezone.test(string) ? string.replace(timezone, 'Z') : string + 'Z')
+	if (date.toISOString().substring(0, 19) !== match[1])
+		return null
+	const isoString = date.toISOString()
 	return isoString.substring(0, isoString.indexOf('.'))
 }
 

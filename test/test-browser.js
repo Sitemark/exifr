@@ -29,6 +29,26 @@ describe("in browser", () => {
 		const exif = await parse(blob, options)
 		assert.equal(exif.Make, 'Google')
 	})
+
+	it("should throw for invalid dates", async () => {
+		const file = await import('./gremsy-vio-thermal.tiff?url')
+		const source = await fetch(file.default).then((res) => res.arrayBuffer())
+		const validDate = new TextEncoder().encode('2020-01-02T03:04:05-0500')
+		for (const invalidDate of ['2020-99-02T03:04:05-0500', '2020-02-31T03:04:05-0500']) {
+			const input = source.slice(0)
+			const inputBytes = new Uint8Array(input)
+			const dateOffset = inputBytes.findIndex((value, index) => validDate.every((dateValue, dateIndex) => inputBytes[index + dateIndex] === dateValue))
+			assert.isAtLeast(dateOffset, 0)
+			inputBytes.set(new TextEncoder().encode(invalidDate), dateOffset)
+			var error
+			try {
+				await parse(input)
+			} catch (caughtError) {
+				error = caughtError
+			}
+			assert.equal(error?.message, `Invalid EXIF date: ${invalidDate}`)
+		}
+	})
 });
 
 describe("as worker", () => {
