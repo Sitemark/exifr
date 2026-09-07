@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.10
+
+### Patch Changes
+
+- 02e755a: Parse ISO-8601 EXIF dates safely and throw for invalid dates.
+
 ## 3.1.9
 
 ### Patch Changes
