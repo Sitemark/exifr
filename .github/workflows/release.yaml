@@ -37,7 +37,7 @@ jobs:
         uses: changesets/action@v2
         with:
           # This also does a build
-          publish: npm run release 
+          publish-script: npm run release
+          github-token: ${{ secrets.GITHUB_TOKEN }}
         env:
           HOME: ${{ github.workspace }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
