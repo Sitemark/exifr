@@ -380,6 +380,33 @@ describe('parser (exif data)', () => {
 			}
 		})
 
+		it(`should ignore invalid EXIF dates without stopping the parse`, async () => {
+			const validDate = new TextEncoder().encode('2019:07:19 11:21:52')
+			for (const invalidDate of ['0000:00:00 00:00:00', '2020:00:01 00:00:00', '2020:01:00 00:00:00', '2020:01:01 24:00:00', '2020:01:01 23:59:60']) {
+				const source = buffers['FLIR_Tau_2_640_R_19mm.jpg']
+				const input = Buffer.from(source)
+				const inputBytes = new Uint8Array(input.buffer, input.byteOffset, input.byteLength)
+				const dateOffset = inputBytes.findIndex((value, index) => validDate.every((dateValue, dateIndex) => inputBytes[index + dateIndex] === dateValue))
+				assert.isAtLeast(dateOffset, 0)
+				inputBytes.set(new TextEncoder().encode(invalidDate), dateOffset)
+				const exif = await parse(input)
+				assert.strictEqual(exif.DateTimeOriginal, null)
+				assert.strictEqual(exif.Make, 'FLIR Systems')
+				assert.strictEqual(exif.latitude, 52.01196797222222)
+			}
+		})
+
+		it(`should create timestamps from ISO-style GPS date stamps`, async () => {
+			const validDate = new TextEncoder().encode('2017:09:16 15:28:54')
+			const input = Buffer.from(buffers['Wiris_2nd_Gen_640_19mm.tiff'])
+			const inputBytes = new Uint8Array(input.buffer, input.byteOffset, input.byteLength)
+			const dateOffset = inputBytes.findIndex((value, index) => validDate.every((dateValue, dateIndex) => inputBytes[index + dateIndex] === dateValue))
+			assert.isAtLeast(dateOffset, 0)
+			inputBytes.set(new TextEncoder().encode('2017-09-16T15:28:54'), dateOffset)
+			const exif = await parse(input)
+			assert.strictEqual(exif.timestamp, '2017-09-16T15:28:54')
+		})
+
 	})
 
 	describe('issues (special cases)', () => {
